@@ -4,12 +4,12 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QWidget>
-#include <QListView>
-#include <QPushButton>
+#include <QListWidget>
 #include <QVBoxLayout>
 
 class	MainWindow : public QWidget
 {
+  Q_OBJECT
 public:
   ~MainWindow();
   MainWindow();
@@ -17,10 +17,14 @@ public:
 private:
 
   QHBoxLayout _vbox;
-  QListView _FilesList;
-  QListView _karaList;
+  QListWidget _FilesList;
+  QListWidget _karaList;
   MainWindow(const MainWindow &);
   const MainWindow &operator=(const MainWindow &);
+
+private slots:
+  void test();
+
 };
 
 #endif

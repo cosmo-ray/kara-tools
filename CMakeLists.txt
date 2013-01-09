@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 2.8)
-PROJECT(helloworld)
+PROJECT(asraf)
 FIND_PACKAGE(Qt4 REQUIRED)
 
-SET(helloworld_SOURCES test.cpp MainWindow.cpp)
-SET(helloworld_HEADERS MainWindow.hh)
+SET(asraf_SOURCES main.cpp MainWindow.cpp)
+SET(asraf_HEADERS MainWindow.hh)
 
-#QT4_WRAP_CPP(helloworld_HEADERS_MOC ${helloworld_HEADERS})
+QT4_WRAP_CPP(asraf_HEADERS_MOC ${asraf_HEADERS})
 
 INCLUDE(${QT_USE_FILE})
 ADD_DEFINITIONS(${QT_DEFINITIONS})
 
-ADD_EXECUTABLE(helloworld ${helloworld_SOURCES}
-    ${helloworld_HEADERS_MOC})
-TARGET_LINK_LIBRARIES(helloworld ${QT_LIBRARIES})
+ADD_EXECUTABLE(asraf ${asraf_SOURCES}
+    ${asraf_HEADERS_MOC})
+TARGET_LINK_LIBRARIES(asraf ${QT_LIBRARIES})
