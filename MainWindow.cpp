@@ -1,4 +1,5 @@
-#include	"stdio.h"
+#include	<iostream>
+#include	<stdio.h>
 #include	"MainWindow.hh"
 
 MainWindow::MainWindow() : _vbox(this)
@@ -10,10 +11,26 @@ MainWindow::MainWindow() : _vbox(this)
   _vbox.addWidget(&_FilesList);
   _vbox.addWidget(&_karaList);
   
+
   connect(&_FilesList,
-	  SIGNAL(currentItemChanged(QListWidgetItem * , QListWidgetItem *  )),
+	  SIGNAL(itemClicked(QListWidgetItem *)),
 	  this,
-	  SLOT(test()));
+	  SLOT(itemClicked(QListWidgetItem *)));
+
+  connect(&_FilesList,
+	  SIGNAL(itemEntered(QListWidgetItem *)),
+	  this,
+	  SLOT(itemEntered(QListWidgetItem *)));
+
+  connect(&_FilesList,
+	  SIGNAL(itemDoubleClicked(QListWidgetItem *)),
+	  this,
+	  SLOT(itemDoubleClicked(QListWidgetItem *)));
+
+  connect(&_FilesList,
+	  SIGNAL(itemActivated(QListWidgetItem *)),
+	  this,
+	  SLOT(itemActivated(QListWidgetItem *)));
 
   _FilesList.addItem("toto");
   _FilesList.addItem("oto");
@@ -47,9 +64,22 @@ MainWindow::MainWindow() : _vbox(this)
   _FilesList.addItem("toto");
 }
 
-void	MainWindow::test()
+void	MainWindow::itemClicked(QListWidgetItem *)
 {
-  printf("toto\n");
+}
+
+
+void	MainWindow::itemEntered(QListWidgetItem *)
+{
+}
+
+void	MainWindow::itemDoubleClicked(QListWidgetItem *)
+{
+}
+
+void	MainWindow::itemActivated(QListWidgetItem *item)
+{
+  std::cout << item->text().toUtf8().constData() << std::endl;
 }
 
 MainWindow::~MainWindow()

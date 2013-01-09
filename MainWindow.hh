@@ -5,6 +5,7 @@
 #include <QDesktopWidget>
 #include <QWidget>
 #include <QListWidget>
+#include <QListWidgetItem>
 #include <QVBoxLayout>
 
 class	MainWindow : public QWidget
@@ -23,8 +24,10 @@ private:
   const MainWindow &operator=(const MainWindow &);
 
 private slots:
-  void test();
-
+  void itemEntered(QListWidgetItem *);
+  void itemDoubleClicked(QListWidgetItem *);
+  void itemActivated(QListWidgetItem *);
+  void itemClicked(QListWidgetItem *);
 };
 
 #endif
