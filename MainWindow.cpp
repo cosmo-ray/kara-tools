@@ -76,7 +76,13 @@ void	MainWindow::readKaraDirectory(const char *dirName)
 
   for (constIterator = filesName.constBegin(); constIterator != filesName.constEnd();
        ++constIterator)
-    _FilesList.addItem(*constIterator);
+    {
+      if ((*constIterator).contains(".avi")
+	  || (*constIterator).contains(".mkv")
+	  || (*constIterator).contains(".flv")
+	)
+      _FilesList.addItem(*constIterator);
+    }
 }
 
 /*------------------- Slots methodes -------------------*/
