@@ -7,7 +7,7 @@
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QVBoxLayout>
-
+#include <QDir>
 class	MainWindow : public QWidget
 {
   Q_OBJECT
@@ -23,6 +23,7 @@ private:
   MainWindow(const MainWindow &);
   const MainWindow &operator=(const MainWindow &);
   void	connector(void); //methode use to place connect function
+  void  readKaraDirectory(const char *);
 
 private slots:
   void itemEntered(QListWidgetItem *);

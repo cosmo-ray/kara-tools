@@ -12,6 +12,7 @@ MainWindow::MainWindow() : _vbox(this)
   _vbox.addWidget(&_karaList);
   
   connector();
+  readKaraDirectory("karaoke");
 }
 
 MainWindow::~MainWindow()
@@ -42,6 +43,12 @@ void	MainWindow::connector(void)
 }
 
 
+void	MainWindow::readKaraDirectory(const char *)
+{
+}
+
+/*------------------- Slots methodes -------------------*/
+
 void	MainWindow::itemClicked(QListWidgetItem *)
 {
 }
@@ -59,4 +66,6 @@ void	MainWindow::itemActivated(QListWidgetItem *item)
 {
   std::cout << item->text().toUtf8().constData() << std::endl;
 }
+
+/*------------------- !Slots methodes -------------------*/
 
