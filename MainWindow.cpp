@@ -11,7 +11,15 @@ MainWindow::MainWindow() : _vbox(this)
   _vbox.addWidget(&_FilesList);
   _vbox.addWidget(&_karaList);
   
+  connector();
+}
 
+MainWindow::~MainWindow()
+{
+}
+
+void	MainWindow::connector(void)
+{
   connect(&_FilesList,
 	  SIGNAL(itemClicked(QListWidgetItem *)),
 	  this,
@@ -31,38 +39,8 @@ MainWindow::MainWindow() : _vbox(this)
 	  SIGNAL(itemActivated(QListWidgetItem *)),
 	  this,
 	  SLOT(itemActivated(QListWidgetItem *)));
-
-  _FilesList.addItem("toto");
-  _FilesList.addItem("oto");
-  _FilesList.addItem("stoto");
-  _FilesList.addItem("ftoto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("dwtoto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
-  _FilesList.addItem("toto");
 }
+
 
 void	MainWindow::itemClicked(QListWidgetItem *)
 {
@@ -80,9 +58,5 @@ void	MainWindow::itemDoubleClicked(QListWidgetItem *)
 void	MainWindow::itemActivated(QListWidgetItem *item)
 {
   std::cout << item->text().toUtf8().constData() << std::endl;
-}
-
-MainWindow::~MainWindow()
-{
 }
 

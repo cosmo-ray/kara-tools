@@ -22,6 +22,7 @@ private:
   QListWidget _karaList;
   MainWindow(const MainWindow &);
   const MainWindow &operator=(const MainWindow &);
+  void	connector(void); //methode use to place connect function
 
 private slots:
   void itemEntered(QListWidgetItem *);
