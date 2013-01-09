@@ -40,6 +40,9 @@ private slots:
 
   /*Kara list slots*/
   void rmItemFromKaraList(QListWidgetItem *);
+
+  /*Button slots*/
+  void start(void);
 };
 
 #endif

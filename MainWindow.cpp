@@ -1,7 +1,10 @@
 #include	<iostream>
 #include	<stdio.h>
+#include	<string>
 #include	<QDir>
 #include	<QStringList>
+#include	<stdlib.h>
+#include	<unistd.h>
 #include	"MainWindow.hh"
 
 MainWindow::MainWindow() : _vbox(this), _start("start")
@@ -51,6 +54,11 @@ void	MainWindow::connector(void)
 	  SIGNAL(itemActivated(QListWidgetItem *)),
 	  this,
 	  SLOT(rmItemFromKaraList(QListWidgetItem *)));
+
+  connect(&_start,
+	  SIGNAL(clicked(bool)),
+	  this,
+	  SLOT(start(void)));
 }
 
 
@@ -95,9 +103,31 @@ void	MainWindow::itemActivated(QListWidgetItem *item)
 
 
 /*Kara list slots*/
+
 void	MainWindow::rmItemFromKaraList(QListWidgetItem *)
 {
   _karaList.takeItem(_karaList.currentRow());
+}
+
+
+/*Button slots*/
+
+void MainWindow::start(void)
+{
+  int	i = 0;
+
+  // chdir("./karaoke");
+  while (_karaList.item(i))
+    {
+      system(std::string(
+			 std::string("mplayer ./karaoke/")
+			 + _karaList.item(i)->text().replace(" ", "\\ "
+							     ).toLocal8Bit().constData()
+			 + " -fs -ass"
+			 ).c_str()
+	     );
+      ++i;
+    }
 }
 
 
