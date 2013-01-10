@@ -7,7 +7,7 @@
 #include	<unistd.h>
 #include	"MainWindow.hh"
 
-MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle")
+MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"), _noDouble("no double"), _double(true)
 {
   QDesktopWidget *desktop = QApplication::desktop();
 
@@ -21,6 +21,7 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle")
 
   _hboxOptions.addWidget(&_start);
   _hboxOptions.addWidget(&_shufle);
+  _hboxOptions.addWidget(&_noDouble);
   
   _vbox.addLayout(&_hboxOptions);
   _vbox.addLayout(&_hboxLists);
@@ -52,7 +53,7 @@ void	MainWindow::connector(void)
   connect(&_FilesList,
 	  SIGNAL(itemActivated(QListWidgetItem *)),
 	  this,
-	  SLOT(itemActivated(QListWidgetItem *)));
+	  SLOT(addToPlaylist(QListWidgetItem *)));
 
   connect(&_karaList,
 	  SIGNAL(itemActivated(QListWidgetItem *)),
@@ -60,9 +61,8 @@ void	MainWindow::connector(void)
 	  SLOT(rmItemFromKaraList(QListWidgetItem *)));
 
   connect(&_start, SIGNAL(clicked(bool)), this, SLOT(start(void)));
-  
   connect(&_shufle, SIGNAL(clicked(bool)), this, SLOT(shufle(void)));
-  
+  connect(&_noDouble, SIGNAL(stateChanged(int)), this, SLOT(noDouble(void)));
 }
 
 
@@ -94,22 +94,15 @@ void	MainWindow::readKaraDirectory(const char *dirName)
 
 /*Files list slots*/
 
-void	MainWindow::itemClicked(QListWidgetItem *)
+void	MainWindow::addToPlaylist(QListWidgetItem *item)
 {
-}
-
-
-void	MainWindow::itemEntered(QListWidgetItem *)
-{
-}
-
-void	MainWindow::itemDoubleClicked(QListWidgetItem *)
-{
-}
-
-void	MainWindow::itemActivated(QListWidgetItem *item)
-{
-  _karaList.addItem(item->text());
+  if (_double)
+    _karaList.addItem(item->text());
+  else
+    {
+      if (_karaList.findItems(item->text(), Qt::MatchCaseSensitive).empty())
+	_karaList.addItem(item->text());
+    }
 }
 
 
@@ -159,6 +152,12 @@ void MainWindow::shufle(void)
       ++i;
     }
 }
+
+ void MainWindow::noDouble(void)
+ {
+   _double = !_double;
+ }
+
 
 /*------------------- !Slots methodes -------------------*/
 

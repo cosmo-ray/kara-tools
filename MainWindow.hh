@@ -8,6 +8,7 @@
 #include <QListWidgetItem>
 #include <QVBoxLayout>
 #include <QPushButton>
+#include <QCheckBox>
 
 class	MainWindow : public QWidget
 {
@@ -25,6 +26,8 @@ private:
   QHBoxLayout _hboxOptions;
   QPushButton _start;
   QPushButton _shufle;
+  QCheckBox   _noDouble;
+  bool	      _double;
 
   MainWindow(const MainWindow &);
   const MainWindow &operator=(const MainWindow &);
@@ -33,10 +36,7 @@ private:
 
 private slots:
   /*Files list slots*/
-  void itemEntered(QListWidgetItem *);
-  void itemDoubleClicked(QListWidgetItem *);
-  void itemActivated(QListWidgetItem *);
-  void itemClicked(QListWidgetItem *);
+  void addToPlaylist(QListWidgetItem *);
   
 
   /*Kara list slots*/
@@ -45,6 +45,7 @@ private slots:
   /*Button slots*/
   void start(void);
   void shufle(void);
+  void noDouble(void);
 };
 
 #endif
