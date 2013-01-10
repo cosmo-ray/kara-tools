@@ -106,19 +106,21 @@ void	MainWindow::rmItemFromKaraList(QListWidgetItem *)
 void MainWindow::start(void)
 {
   int	i = 0;
+  std::string	listsKara;
 
   // chdir("./karaoke");
   while (_karaList.item(i))
     {
-      system(std::string(
-			 std::string("mplayer ./karaoke/")
-			 + _karaList.item(i)->text().replace(" ", "\\ "
-							     ).toLocal8Bit().constData()
-			 + " -fs -ass"
-			 ).c_str()
-	     );
+      listsKara += " ./karaoke/";
+      listsKara += _karaList.item(i)->text().replace(" ", "\\ ").toLocal8Bit().constData();
+      listsKara += " -fs -ass";
       ++i;
     }
+  system(std::string(
+		     std::string("mplayer ")
+		     + listsKara
+		     ).c_str()
+	 );
 }
 
 
