@@ -7,9 +7,12 @@
 #include	<unistd.h>
 #include	"MainWindow.hh"
 
-MainWindow::MainWindow() : _vbox(this), _start("start")
+MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle")
 {
   QDesktopWidget *desktop = QApplication::desktop();
+
+  srand(time(0));
+
   resize(desktop->width(), desktop->height());
   setWindowTitle("Asamiya Saki rape all your familly");
 
@@ -17,6 +20,7 @@ MainWindow::MainWindow() : _vbox(this), _start("start")
   _hboxLists.addWidget(&_karaList);
 
   _hboxOptions.addWidget(&_start);
+  _hboxOptions.addWidget(&_shufle);
   
   _vbox.addLayout(&_hboxOptions);
   _vbox.addLayout(&_hboxLists);
@@ -55,10 +59,10 @@ void	MainWindow::connector(void)
 	  this,
 	  SLOT(rmItemFromKaraList(QListWidgetItem *)));
 
-  connect(&_start,
-	  SIGNAL(clicked(bool)),
-	  this,
-	  SLOT(start(void)));
+  connect(&_start, SIGNAL(clicked(bool)), this, SLOT(start(void)));
+  
+  connect(&_shufle, SIGNAL(clicked(bool)), this, SLOT(shufle(void)));
+  
 }
 
 
@@ -80,6 +84,7 @@ void	MainWindow::readKaraDirectory(const char *dirName)
       if ((*constIterator).contains(".avi")
 	  || (*constIterator).contains(".mkv")
 	  || (*constIterator).contains(".flv")
+	  || (*constIterator).contains(".mp4")
 	)
       _FilesList.addItem(*constIterator);
     }
@@ -136,6 +141,24 @@ void MainWindow::start(void)
     }
 }
 
+
+void MainWindow::shufle(void)
+{
+  int	len = _karaList.count();
+  int	i = 0;
+
+  if (len < 2)
+    return ;
+
+  QListWidgetItem *tmp;
+
+  while (i < len)
+    {
+      tmp = _karaList.takeItem(rand() % len);
+      _karaList.insertItem(rand() % (len - 1), tmp);
+      ++i;
+    }
+}
 
 /*------------------- !Slots methodes -------------------*/
 

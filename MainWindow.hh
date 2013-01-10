@@ -24,6 +24,7 @@ private:
   QListWidget _karaList;
   QHBoxLayout _hboxOptions;
   QPushButton _start;
+  QPushButton _shufle;
 
   MainWindow(const MainWindow &);
   const MainWindow &operator=(const MainWindow &);
@@ -43,6 +44,7 @@ private slots:
 
   /*Button slots*/
   void start(void);
+  void shufle(void);
 };
 
 #endif
