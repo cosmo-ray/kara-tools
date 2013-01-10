@@ -6,7 +6,6 @@ ScriptType: v4.00+
 WrapStyle: 0
 ScaledBorderAndShadow: yes
 Collisions: Normal
-Audio URI: Sukeban Deka II ed 3.avi
 Scroll Position: 0
 Active Line: 13
 Video Zoom Percent: 1
@@ -32,7 +31,7 @@ Dialogue: 0,0:00:55.50,0:01:02.26,Default,,0,0,0,,{\k33}{\k38}nu{\k38}ku{\k71}mo
 Dialogue: 0,0:01:02.52,0:01:07.72,Default,,0,0,0,,{\k31}{\k53}da{\k22}ki{\k83}shi{\k24}me{\k43}ru {\k45}hi{\k27}to {\k58}ni {\k23}na{\k34}ru {\k77}wa
 Dialogue: 0,0:01:09.66,0:01:16.62,Default,,0,0,0,,{\k43}{\k27}ka{\k50}gi{\k66}ri{\k26}na{\k33}ku {\k38}hi{\k96}ro{\k89}i {\k31}ya{\k55}sa{\k24}shi{\k47}sa {\k71}de
 Dialogue: 0,0:01:16.90,0:01:21.62,Default,,0,0,0,,{\k16}{\k40}yu{\k40}ru{\k69}shi{\k31}a{\k39}u {\k32}hi{\k47}to {\k44}ni {\k30}na{\k46}ru {\k39}wa
-Dialogue: 0,0:01:28.06,0:01:30.66,Default,,0,0,0,,{\k29}{\k14}ka{\k73}ki{\k15}ka{\k26}ke{\k27}no {\k18}te{\k24}ga{\k34}gi
+Dialogue: 0,0:01:28.06,0:01:30.66,Default,,0,0,0,,{\k29}{\k14}ka{\k73}ki{\k15}ka{\k26}ke{\k27}no {\k18}te{\k24}ga{\k34}mi
 Dialogue: 0,0:01:31.44,0:01:34.28,Default,,0,0,0,,{\k43}{\k22}MO{\k44}SA{\k50}IC {\k28} mo{\k21}yo{\k34}u{\k42} ni
 Dialogue: 0,0:01:35.06,0:01:37.72,Default,,0,0,0,,{\k40}{\k18}u{\k63}mi {\k23}ni {\k22}na{\k22}ga{\k23}shi{\k22}ta{\k33}ra
 Dialogue: 0,0:01:38.76,0:01:41.14,Default,,0,0,0,,{\k41}{\k44}ka{\k44}e{\k22}ri{\k46}ma{\k42}su

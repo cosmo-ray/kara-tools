@@ -26,6 +26,7 @@ private:
   QHBoxLayout _hboxOptions;
   QPushButton _start;
   QPushButton _shufle;
+  QPushButton _pick;
   QCheckBox   _noDouble;
   bool	      _double;
 
@@ -45,6 +46,7 @@ private slots:
   /*Button slots*/
   void start(void);
   void shufle(void);
+  void pick(void);
   void noDouble(void);
 };
 

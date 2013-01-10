@@ -7,7 +7,7 @@
 #include	<unistd.h>
 #include	"MainWindow.hh"
 
-MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"), _noDouble("no double"), _double(true)
+MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"), _pick("pick"), _noDouble("no double"), _double(true)
 {
   QDesktopWidget *desktop = QApplication::desktop();
 
@@ -21,6 +21,7 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"), _noD
 
   _hboxOptions.addWidget(&_start);
   _hboxOptions.addWidget(&_shufle);
+  _hboxOptions.addWidget(&_pick);
   _hboxOptions.addWidget(&_noDouble);
   
   _vbox.addLayout(&_hboxOptions);
@@ -36,21 +37,6 @@ MainWindow::~MainWindow()
 void	MainWindow::connector(void)
 {
   connect(&_FilesList,
-	  SIGNAL(itemClicked(QListWidgetItem *)),
-	  this,
-	  SLOT(itemClicked(QListWidgetItem *)));
-
-  connect(&_FilesList,
-	  SIGNAL(itemEntered(QListWidgetItem *)),
-	  this,
-	  SLOT(itemEntered(QListWidgetItem *)));
-
-  connect(&_FilesList,
-	  SIGNAL(itemDoubleClicked(QListWidgetItem *)),
-	  this,
-	  SLOT(itemDoubleClicked(QListWidgetItem *)));
-
-  connect(&_FilesList,
 	  SIGNAL(itemActivated(QListWidgetItem *)),
 	  this,
 	  SLOT(addToPlaylist(QListWidgetItem *)));
@@ -62,6 +48,7 @@ void	MainWindow::connector(void)
 
   connect(&_start, SIGNAL(clicked(bool)), this, SLOT(start(void)));
   connect(&_shufle, SIGNAL(clicked(bool)), this, SLOT(shufle(void)));
+  connect(&_pick, SIGNAL(clicked(bool)), this, SLOT(pick(void)));
   connect(&_noDouble, SIGNAL(stateChanged(int)), this, SLOT(noDouble(void)));
 }
 
@@ -152,6 +139,16 @@ void MainWindow::shufle(void)
       ++i;
     }
 }
+
+void MainWindow::pick(void)
+{
+  int	len = _FilesList.count();
+  if (!len)
+    return;
+  addToPlaylist(_FilesList.item(rand() % len));
+
+}
+
 
  void MainWindow::noDouble(void)
  {
