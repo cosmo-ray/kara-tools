@@ -28,7 +28,11 @@ private:
   QPushButton _shufle;
   QPushButton _pick;
   QCheckBox   _noDouble;
+  QCheckBox   _beginEyecatch;
+  QCheckBox   _endEyecatch;
   bool	      _double;
+  bool	      _bEye;
+  bool	      _eEye;
 
   MainWindow(const MainWindow &);
   const MainWindow &operator=(const MainWindow &);
@@ -48,6 +52,8 @@ private slots:
   void shufle(void);
   void pick(void);
   void noDouble(void);
+  void beginEyecatch(void);
+  void endEyecatch(void);
 };
 
 #endif

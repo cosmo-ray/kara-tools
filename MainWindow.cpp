@@ -7,7 +7,10 @@
 #include	<unistd.h>
 #include	"MainWindow.hh"
 
-MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"), _pick("pick"), _noDouble("no double"), _double(true)
+MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
+			   _pick("pick"), _noDouble("no double"), _double(true), 
+			   _beginEyecatch("begin eyecatch"), _bEye(false),
+			   _endEyecatch("end eyecatch"), _eEye(false)
 {
   QDesktopWidget *desktop = QApplication::desktop();
 
@@ -23,6 +26,8 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"), _pic
   _hboxOptions.addWidget(&_shufle);
   _hboxOptions.addWidget(&_pick);
   _hboxOptions.addWidget(&_noDouble);
+  _hboxOptions.addWidget(&_beginEyecatch);
+  _hboxOptions.addWidget(&_endEyecatch);
   
   _vbox.addLayout(&_hboxOptions);
   _vbox.addLayout(&_hboxLists);
@@ -46,10 +51,15 @@ void	MainWindow::connector(void)
 	  this,
 	  SLOT(rmItemFromKaraList(QListWidgetItem *)));
 
+  /*button*/
   connect(&_start, SIGNAL(clicked(bool)), this, SLOT(start(void)));
   connect(&_shufle, SIGNAL(clicked(bool)), this, SLOT(shufle(void)));
   connect(&_pick, SIGNAL(clicked(bool)), this, SLOT(pick(void)));
+
+  /*check box*/
   connect(&_noDouble, SIGNAL(stateChanged(int)), this, SLOT(noDouble(void)));
+  connect(&_beginEyecatch, SIGNAL(stateChanged(int)), this, SLOT(beginEyecatch(void)));
+  connect(&_endEyecatch, SIGNAL(stateChanged(int)), this, SLOT(endEyecatch(void)));
 }
 
 
@@ -107,8 +117,31 @@ void MainWindow::start(void)
 {
   int	i = 0;
   std::string	listsKara;
+  std::string	endlist;
 
-  // chdir("./karaoke");
+  if (_bEye | _eEye)
+    {
+      QDir  dir("eyecatch");
+      QStringList  eyecatchsName = dir.entryList();
+      eyecatchsName.pop_front();
+      eyecatchsName.pop_front();
+      int	len = eyecatchsName.size();
+      if (_bEye && len)
+	{
+	  listsKara += " ./eyecatch/";
+	  listsKara += eyecatchsName[rand() % len].replace(" ", "\\ ").toLocal8Bit().constData();
+	  std::cout << listsKara << std::endl;
+	  listsKara += " -fs";
+	}
+      if (_eEye && len)
+	{
+	  endlist += " ./eyecatch/";
+	  endlist += eyecatchsName[rand() % len].replace(" ", "\\ ").toLocal8Bit().constData();
+	  std::cout << endlist << std::endl;
+	  endlist += " -fs";
+	}
+    }
+
   while (_karaList.item(i))
     {
       listsKara += " ./karaoke/";
@@ -116,6 +149,7 @@ void MainWindow::start(void)
       listsKara += " -fs -ass";
       ++i;
     }
+  listsKara += endlist;
   system(std::string(
 		     std::string("mplayer ")
 		     + listsKara
@@ -157,6 +191,15 @@ void MainWindow::pick(void)
    _double = !_double;
  }
 
+void MainWindow::beginEyecatch(void)
+{
+  _bEye = !_bEye;  
+}
+
+void MainWindow::endEyecatch(void)
+{
+  _eEye = !_eEye;  
+}
 
 /*------------------- !Slots methodes -------------------*/
 
