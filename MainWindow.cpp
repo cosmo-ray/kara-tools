@@ -17,7 +17,7 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
   srand(time(0));
 
   resize(desktop->width(), desktop->height());
-  setWindowTitle("Asamiya Saki rape all your familly");
+  setWindowTitle("Asamiya Saki will rape all your familly");
 
   _hboxLists.addWidget(&_FilesList);
   _hboxLists.addWidget(&_karaList);
