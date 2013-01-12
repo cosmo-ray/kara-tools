@@ -18,6 +18,7 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
 
   resize(desktop->width(), desktop->height());
   setWindowTitle("Asamiya Saki will rape all your familly");
+  setWindowIcon(QIcon("resources/sukeban_deka_icone.jpg"));
 
   _hboxLists.addWidget(&_FilesList);
   _hboxLists.addWidget(&_karaList);
