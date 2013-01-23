@@ -4,6 +4,7 @@ FIND_PACKAGE(Qt4 REQUIRED)
 
 SET(asraf_SOURCES main.cpp MainWindow.cpp)
 SET(asraf_HEADERS MainWindow.hh)
+set(EXECUTABLE_OUTPUT_PATH ../)
 
 QT4_WRAP_CPP(asraf_HEADERS_MOC ${asraf_HEADERS})
 
