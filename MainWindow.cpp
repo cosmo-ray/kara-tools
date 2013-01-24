@@ -131,14 +131,12 @@ void MainWindow::start(void)
 	{
 	  listsKara += " ./eyecatch/";
 	  listsKara += eyecatchsName[rand() % len].replace(" ", "\\ ").toLocal8Bit().constData();
-	  std::cout << listsKara << std::endl;
 	  listsKara += " -fs";
 	}
       if (_eEye && len)
 	{
 	  endlist += " ./eyecatch/";
 	  endlist += eyecatchsName[rand() % len].replace(" ", "\\ ").toLocal8Bit().constData();
-	  std::cout << endlist << std::endl;
 	  endlist += " -fs";
 	}
     }
