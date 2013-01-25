@@ -144,7 +144,7 @@ void MainWindow::start(void)
   while (_karaList.item(i))
     {
       listsKara += " ./karaoke/";
-      listsKara += _karaList.item(i)->text().replace(" ", "\\ ").toLocal8Bit().constData();
+      listsKara += _karaList.item(i)->text().replace(" ", "\\ ").replace("'", "\\'").toLocal8Bit().constData();
       listsKara += " -fs -ass";
       ++i;
     }
