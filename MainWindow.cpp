@@ -10,11 +10,20 @@
 MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
 			   _pick("pick"), _noDouble("no double"), _double(true), 
 			   _beginEyecatch("begin eyecatch"), _bEye(false),
-			   _endEyecatch("end eyecatch"), _eEye(false)
+			   _endEyecatch("end eyecatch"), _eEye(false),
+#ifdef	WIN32
+			   _player(".\\mplayer") //i'm going to distribute mplayer with the windows version
+#else
+			   _player("mplayer")
+#endif
 {
   QDesktopWidget *desktop = QApplication::desktop();
 
+#ifdef	WIN32
+  srand(153);
+#else
   srand(time(0));
+#endif
 
   resize(desktop->width(), desktop->height());
   setWindowTitle("Asamiya Saki will rape all your familly");
@@ -117,8 +126,8 @@ void	MainWindow::rmItemFromKaraList(QListWidgetItem *)
 void MainWindow::start(void)
 {
   int	i = 0;
-  std::string	listsKara;
-  std::string	endlist;
+  QString	listsKara;
+  QString	endlist;
 
   if (_bEye | _eEye)
     {
@@ -149,11 +158,11 @@ void MainWindow::start(void)
       ++i;
     }
   listsKara += endlist;
-  system(std::string(
-		     std::string("mplayer ")
-		     + listsKara
-		     ).c_str()
-	 );
+  system(QString(
+  _player
+  + listsKara
+  ).toLocal8Bit().constData()
+  );
 }
 
 

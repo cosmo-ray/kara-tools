@@ -30,6 +30,7 @@ private:
   QCheckBox   _noDouble;
   QCheckBox   _beginEyecatch;
   QCheckBox   _endEyecatch;
+  QString     _player;
   bool	      _double;
   bool	      _bEye;
   bool	      _eEye;
