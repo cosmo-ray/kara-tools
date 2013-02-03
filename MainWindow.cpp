@@ -128,7 +128,11 @@ void MainWindow::start(void)
   int	i = 0;
   QString	listsKara;
   QString	endlist;
+  pid_t		forkRet;
 
+  forkRet = fork();
+  if (forkRet)
+    return;
   if (_bEye | _eEye)
     {
       QDir  dir("eyecatch");
@@ -159,10 +163,10 @@ void MainWindow::start(void)
     }
   listsKara += endlist;
   system(QString(
-  _player
-  + listsKara
-  ).toLocal8Bit().constData()
-  );
+		 _player
+		 + listsKara
+		 ).toLocal8Bit().constData()
+	 );
 }
 
 
