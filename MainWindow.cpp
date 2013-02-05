@@ -167,6 +167,7 @@ void MainWindow::start(void)
 		 + listsKara
 		 ).toLocal8Bit().constData()
 	 );
+  exit(0);
 }
 
 
