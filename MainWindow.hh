@@ -9,6 +9,7 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QCheckBox>
+#include <QKeyEvent>
 
 class	MainWindow : public QWidget
 {
@@ -24,9 +25,11 @@ private:
   QListWidget _FilesList;
   QListWidget _karaList;
   QHBoxLayout _hboxOptions;
+  QHBoxLayout _hbox2ndOptions;
   QPushButton _start;
   QPushButton _shufle;
   QPushButton _pick;
+  QPushButton _clearPlaylist;
   QCheckBox   _noDouble;
   QCheckBox   _beginEyecatch;
   QCheckBox   _endEyecatch;
@@ -40,11 +43,12 @@ private:
   void	connector(void); //methode use to place connect function
   void  readKaraDirectory(const char *);
 
+  void keyPressEvent(QKeyEvent *e);
+
 private slots:
   /*Files list slots*/
   void addToPlaylist(QListWidgetItem *);
   
-
   /*Kara list slots*/
   void rmItemFromKaraList(QListWidgetItem *);
 
@@ -55,6 +59,7 @@ private slots:
   void noDouble(void);
   void beginEyecatch(void);
   void endEyecatch(void);
+  void clearPlaylist(void);
 };
 
 #endif

@@ -8,14 +8,10 @@
 #include	"MainWindow.hh"
 
 MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
-			   _pick("pick"), _noDouble("no double"), _double(true), 
-			   _beginEyecatch("begin eyecatch"), _bEye(false),
+			   _pick("pick"), _clearPlaylist("clear"), _noDouble("no double"),
+			   _double(true), _beginEyecatch("begin eyecatch"), _bEye(false),
 			   _endEyecatch("end eyecatch"), _eEye(false),
-#ifdef	WIN32
-			   _player(".\\mplayer") //i'm going to distribute mplayer with the windows version
-#else
 			   _player("mplayer")
-#endif
 {
   QDesktopWidget *desktop = QApplication::desktop();
 
@@ -32,6 +28,8 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
   _hboxLists.addWidget(&_FilesList);
   _hboxLists.addWidget(&_karaList);
 
+  _hbox2ndOptions.addWidget(&_clearPlaylist);
+
   _hboxOptions.addWidget(&_start);
   _hboxOptions.addWidget(&_shufle);
   _hboxOptions.addWidget(&_pick);
@@ -40,6 +38,7 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
   _hboxOptions.addWidget(&_endEyecatch);
   
   _vbox.addLayout(&_hboxOptions);
+  _vbox.addLayout(&_hbox2ndOptions);
   _vbox.addLayout(&_hboxLists);
   connector();
   readKaraDirectory("karaoke");
@@ -65,6 +64,7 @@ void	MainWindow::connector(void)
   connect(&_start, SIGNAL(clicked(bool)), this, SLOT(start(void)));
   connect(&_shufle, SIGNAL(clicked(bool)), this, SLOT(shufle(void)));
   connect(&_pick, SIGNAL(clicked(bool)), this, SLOT(pick(void)));
+  connect(&_clearPlaylist, SIGNAL(clicked(bool)), this, SLOT(clearPlaylist(void)));
 
   /*check box*/
   connect(&_noDouble, SIGNAL(stateChanged(int)), this, SLOT(noDouble(void)));
@@ -120,6 +120,17 @@ void	MainWindow::rmItemFromKaraList(QListWidgetItem *)
   _karaList.takeItem(_karaList.currentRow());
 }
 
+
+/*ctrl f*/
+
+void MainWindow::keyPressEvent(QKeyEvent *e)
+{
+  if ( (e->key() == Qt::Key_F) && QApplication::keyboardModifiers() && Qt::ControlModifier)
+    {
+      std::cout << " Correct Key" << std::endl;
+      //connect my signal and slot
+    }
+}
 
 /*Button slots*/
 
@@ -198,6 +209,10 @@ void MainWindow::pick(void)
 
 }
 
+void MainWindow::clearPlaylist(void)
+{
+  while(_karaList.takeItem(0));
+}
 
  void MainWindow::noDouble(void)
  {
