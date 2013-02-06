@@ -5,6 +5,7 @@
 #include	<QStringList>
 #include	<stdlib.h>
 #include	<unistd.h>
+
 #include	"MainWindow.hh"
 
 MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
@@ -125,11 +126,44 @@ void	MainWindow::rmItemFromKaraList(QListWidgetItem *)
 
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
+  static bool	hasBeenPress = false;
+  static QString	toFind;
+
   if ( (e->key() == Qt::Key_F) && QApplication::keyboardModifiers() && Qt::ControlModifier)
     {
-      std::cout << " Correct Key" << std::endl;
-      //connect my signal and slot
+      if (!hasBeenPress)
+	hasBeenPress = true;
+      else
+	{
+	  hasBeenPress = false;
+	  toFind = "";
+	  readKaraDirectory("karaoke");
+	}
     }
+  if (hasBeenPress && toFind != "")
+    {
+      QList<QListWidgetItem *> iList; 
+      int	i = 0;
+      int	end;
+ 
+      toFind += e->text();
+      iList = _FilesList.findItems(toFind, Qt::MatchContains);
+      while(_FilesList.takeItem(0)); //should realy be optimise
+      end = iList.size();
+      std::cout << e->text().toLocal8Bit().constData() << std::endl;
+      std::cout << end << std::endl;
+      std::cout << toFind.toLocal8Bit().constData() << std::endl;
+      while (i < end)
+	{
+	  _FilesList.addItem(iList[i]->text());
+	  ++i;
+	}
+    }
+  else if(hasBeenPress && ((e->text()[0] >= 'a' && e->text()[0] <= 'z')
+			   || (e->text()[0] >= '0' && e->text()[0] <= '9')
+			   || (e->text()[0]  == ' ' || e->text()[0] == '\''))
+	  )
+    toFind += e->text();
 }
 
 /*Button slots*/
