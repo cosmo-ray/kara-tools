@@ -137,6 +137,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 	{
 	  hasBeenPress = false;
 	  toFind.clear();
+	  while(_FilesList.takeItem(0)); //should realy be optimise
 	  readKaraDirectory("karaoke");
 	}
     }
