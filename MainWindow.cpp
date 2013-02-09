@@ -9,10 +9,12 @@
 #include	"MainWindow.hh"
 
 MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
-			   _pick("pick"), _clearPlaylist("clear"), _noDouble("no double"),
+			   _pick("pick"), _clearPlaylist("clear"),
+			   _changeDirectory("change directory"),
+			   _noDouble("no double"),
 			   _double(true), _beginEyecatch("begin eyecatch"), _bEye(false),
 			   _endEyecatch("end eyecatch"), _eEye(false),
-			   _player("mplayer")
+			   _player("mplayer"), _karaDirectory("karaoke")
 {
   QDesktopWidget *desktop = QApplication::desktop();
 
@@ -29,6 +31,7 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
   _hboxLists.addWidget(&_FilesList);
   _hboxLists.addWidget(&_karaList);
 
+  _hbox2ndOptions.addWidget(&_changeDirectory);
   _hbox2ndOptions.addWidget(&_clearPlaylist);
 
   _hboxOptions.addWidget(&_start);
@@ -42,7 +45,7 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
   _vbox.addLayout(&_hbox2ndOptions);
   _vbox.addLayout(&_hboxLists);
   connector();
-  readKaraDirectory("karaoke");
+  readKaraDirectory();
 }
 
 MainWindow::~MainWindow()
@@ -66,6 +69,7 @@ void	MainWindow::connector(void)
   connect(&_shufle, SIGNAL(clicked(bool)), this, SLOT(shufle(void)));
   connect(&_pick, SIGNAL(clicked(bool)), this, SLOT(pick(void)));
   connect(&_clearPlaylist, SIGNAL(clicked(bool)), this, SLOT(clearPlaylist(void)));
+  connect(&_changeDirectory, SIGNAL(clicked(bool)), this, SLOT(changeDirectory(void)));
 
   /*check box*/
   connect(&_noDouble, SIGNAL(stateChanged(int)), this, SLOT(noDouble(void)));
@@ -74,9 +78,9 @@ void	MainWindow::connector(void)
 }
 
 
-void	MainWindow::readKaraDirectory(const char *dirName)
+void	MainWindow::readKaraDirectory()
 {
-  QDir	dir(dirName);
+  QDir	dir(_karaDirectory);
   if (!dir.exists())
     {
       qWarning("Cannot find the karaoke directory");
@@ -137,8 +141,8 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 	{
 	  hasBeenPress = false;
 	  toFind.clear();
-	  while(_FilesList.takeItem(0)); //should realy be optimise
-	  readKaraDirectory("karaoke");
+	  clearDirList();
+	  readKaraDirectory();
 	}
     }
   if (hasBeenPress && toFind != "")
@@ -149,7 +153,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
  
       toFind += e->text();
       iList = _FilesList.findItems(toFind, Qt::MatchContains);
-      while(_FilesList.takeItem(0)); //should realy be optimise
+      clearDirList();
       end = iList.size();
       std::cout << e->text().toLocal8Bit().constData() << std::endl;
       std::cout << end << std::endl;
@@ -202,7 +206,9 @@ void MainWindow::start(void)
 
   while (_karaList.item(i))
     {
-      listsKara += " ./karaoke/";
+      listsKara += " ";
+      listsKara += _karaDirectory;
+      listsKara += "/";
       listsKara += _karaList.item(i)->text().replace(" ", "\\ ").replace("'", "\\'").replace("&", "\\&").replace("(", "\\(").replace(")", "\\)").toLocal8Bit().constData();
       listsKara += " -fs -ass";
       ++i;
@@ -249,6 +255,20 @@ void MainWindow::clearPlaylist(void)
   while(_karaList.takeItem(0));
 }
 
+void MainWindow::changeDirectory(void)
+{
+  QString path = QFileDialog::getExistingDirectory(0);
+
+  std::cout << path.toLocal8Bit().constData() << std::endl;
+  if ( path.isNull() == false )
+    {
+      _karaDirectory = path;
+    }
+  clearDirList();
+  readKaraDirectory();
+}
+
+
  void MainWindow::noDouble(void)
  {
    _double = !_double;
@@ -266,3 +286,8 @@ void MainWindow::endEyecatch(void)
 
 /*------------------- !Slots methodes -------------------*/
 
+
+void MainWindow::clearDirList(void)
+{
+  while(_FilesList.takeItem(0)); //should realy be optimise  
+}

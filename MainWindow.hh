@@ -10,6 +10,7 @@
 #include <QPushButton>
 #include <QCheckBox>
 #include <QKeyEvent>
+#include <QFileDialog>
 
 class	MainWindow : public QWidget
 {
@@ -30,20 +31,22 @@ private:
   QPushButton _shufle;
   QPushButton _pick;
   QPushButton _clearPlaylist;
+  QPushButton _changeDirectory;
   QCheckBox   _noDouble;
   QCheckBox   _beginEyecatch;
   QCheckBox   _endEyecatch;
   QString     _player;
+  QString     _karaDirectory;
   bool	      _double;
   bool	      _bEye;
   bool	      _eEye;
 
   MainWindow(const MainWindow &);
   const MainWindow &operator=(const MainWindow &);
-  void	connector(void); //methode use to place connect function
-  void  readKaraDirectory(const char *);
-
+  void connector(void); //methode use to place connect function
+  void readKaraDirectory();
   void keyPressEvent(QKeyEvent *e);
+  void clearDirList(void);
 
 private slots:
   /*Files list slots*/
@@ -60,6 +63,7 @@ private slots:
   void beginEyecatch(void);
   void endEyecatch(void);
   void clearPlaylist(void);
+  void changeDirectory(void);
 };
 
 #endif
