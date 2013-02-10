@@ -17,7 +17,12 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
 			   _noDouble("no double"),
 			   _double(true), _beginEyecatch("begin eyecatch"), _bEye(false),
 			   _endEyecatch("end eyecatch"), _eEye(false),
-               _player("\"\\os a moile\\asraf-build-Desktop_Qt_5_0_1_MinGW_32bit-Release\\release\\mplayer\""), _karaDirectory("karaoke")
+			   #ifdef WIN32
+			   _player("\"\\os a moile\\asraf-build-Desktop_Qt_5_0_1_MinGW_32bit-Release\\release\\mplayer\""),
+			   #else
+			   _player("mplayer"),
+			   #endif
+			   _karaDirectory("karaoke")
 {
   QDesktopWidget *desktop = QApplication::desktop();
 
@@ -217,29 +222,30 @@ void MainWindow::start(void)
       listsKara += _karaDirectory;
       listsKara += "/";
       listsKara += _karaList.item(i)->text().replace(" ", "\\ ").replace("'", "\\'").replace("&", "\\&").replace("(", "\\(").replace(")", "\\)").toLocal8Bit().constData();
-      listsKara += " -fs -ass";
       #else
       listsKara += "\"";
       listsKara += _karaDirectory.replace("/", "\\");;
       listsKara += "\\";
       listsKara += _karaList.item(i)->text();
       listsKara += "\"";
-      listsKara += " -fs -ass";
       #endif
+      listsKara += " -fs -ass";
       ++i;
     }
   listsKara += endlist;
-  std::cout << QString(
-                    _player
-                    + listsKara
-                    ).toLocal8Bit().constData() << std::endl;
+#ifdef WIN32
   system(QString(
-         "\"" + _player
-         + listsKara + "\""
-         ).toLocal8Bit().constData()
-	 );
-#ifndef WIN32
-  exit(0);
+  "\"" + _player
+    + listsKara + "\""
+    ).toLocal8Bit().constData()
+    );
+#else
+ system(QString(
+  _player
+    + listsKara
+    ).toLocal8Bit().constData()
+    );
+ exit(0);
 #endif
 }
 
