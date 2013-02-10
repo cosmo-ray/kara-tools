@@ -5,6 +5,9 @@
 #include	<QStringList>
 #include	<stdlib.h>
 #include	<unistd.h>
+#ifdef	WIN32
+#include	<windows.h>
+#endif
 
 #include	"MainWindow.hh"
 
@@ -14,7 +17,7 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
 			   _noDouble("no double"),
 			   _double(true), _beginEyecatch("begin eyecatch"), _bEye(false),
 			   _endEyecatch("end eyecatch"), _eEye(false),
-			   _player("mplayer"), _karaDirectory("karaoke")
+               _player("\"\\os a moile\\asraf-build-Desktop_Qt_5_0_1_MinGW_32bit-Release\\release\\mplayer\""), _karaDirectory("karaoke")
 {
   QDesktopWidget *desktop = QApplication::desktop();
 
@@ -97,6 +100,7 @@ void	MainWindow::readKaraDirectory()
 	  || (*constIterator).contains(".mkv")
 	  || (*constIterator).contains(".flv")
 	  || (*constIterator).contains(".mp4")
+      || (*constIterator).contains(".mp3")
 	)
       _FilesList.addItem(*constIterator);
     }
@@ -178,11 +182,13 @@ void MainWindow::start(void)
   int	i = 0;
   QString	listsKara;
   QString	endlist;
+#ifndef WIN32
   pid_t		forkRet;
 
   forkRet = fork();
   if (forkRet)
     return;
+#endif
   if (_bEye | _eEye)
     {
       QDir  dir("eyecatch");
@@ -207,19 +213,34 @@ void MainWindow::start(void)
   while (_karaList.item(i))
     {
       listsKara += " ";
+      #ifndef WIN32
       listsKara += _karaDirectory;
       listsKara += "/";
       listsKara += _karaList.item(i)->text().replace(" ", "\\ ").replace("'", "\\'").replace("&", "\\&").replace("(", "\\(").replace(")", "\\)").toLocal8Bit().constData();
       listsKara += " -fs -ass";
+      #else
+      listsKara += "\"";
+      listsKara += _karaDirectory.replace("/", "\\");;
+      listsKara += "\\";
+      listsKara += _karaList.item(i)->text();
+      listsKara += "\"";
+      listsKara += " -fs -ass";
+      #endif
       ++i;
     }
   listsKara += endlist;
+  std::cout << QString(
+                    _player
+                    + listsKara
+                    ).toLocal8Bit().constData() << std::endl;
   system(QString(
-		 _player
-		 + listsKara
-		 ).toLocal8Bit().constData()
+         "\"" + _player
+         + listsKara + "\""
+         ).toLocal8Bit().constData()
 	 );
+#ifndef WIN32
   exit(0);
+#endif
 }
 
 
@@ -259,7 +280,7 @@ void MainWindow::changeDirectory(void)
 {
   QString path = QFileDialog::getExistingDirectory(0);
 
-  std::cout << path.toLocal8Bit().constData() << std::endl;
+  //std::cout << path.toLocal8Bit().constData() << std::endl;
   if ( path.isNull() == false )
     {
       _karaDirectory = path;
