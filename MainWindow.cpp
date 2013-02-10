@@ -1,6 +1,4 @@
 #include	<iostream>
-#include	<stdio.h>
-#include	<string>
 #include	<QDir>
 #include	<QStringList>
 #include	<stdlib.h>
@@ -17,16 +15,12 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
 			   _noDouble("no double"),
 			   _double(true), _beginEyecatch("begin eyecatch"), _bEye(false),
 			   _endEyecatch("end eyecatch"), _eEye(false),
-               _player("\"\\os a moile\\asraf-build-Desktop_Qt_5_0_1_MinGW_32bit-Release\\release\\mplayer\""), _karaDirectory("karaoke")
+			   _player(getPlayerCmd()),
+			   _karaDirectory("karaoke")
 {
   QDesktopWidget *desktop = QApplication::desktop();
 
-#ifdef	WIN32
-  srand(153);
-#else
-  srand(time(0));
-#endif
-
+  initRand();
   resize(desktop->width(), desktop->height());
   setWindowTitle("Asamiya Saki will rape all your familly");
   setWindowIcon(QIcon("resources/sukeban_deka_icone.jpg"));
@@ -228,19 +222,9 @@ void MainWindow::start(void)
       #endif
       ++i;
     }
-  listsKara += endlist;
-  std::cout << QString(
-                    _player
-                    + listsKara
-                    ).toLocal8Bit().constData() << std::endl;
-  system(QString(
-         "\"" + _player
-         + listsKara + "\""
-         ).toLocal8Bit().constData()
-	 );
-#ifndef WIN32
-  exit(0);
-#endif
+
+
+  execPlaylist(_player, listsKara);
 }
 
 

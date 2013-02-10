@@ -12,6 +12,8 @@
 #include <QKeyEvent>
 #include <QFileDialog>
 
+#include "core.hh"
+
 class	MainWindow : public QWidget
 {
   Q_OBJECT
