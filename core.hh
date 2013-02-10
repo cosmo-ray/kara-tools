@@ -6,7 +6,7 @@
 #include	<iostream>
 
 QString  getPlayerCmd();
-void	initRand();
+void	 initRand();
 
 
 void	execPlaylist(const QString &player, const QString &listKara);

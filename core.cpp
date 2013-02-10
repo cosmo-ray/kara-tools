@@ -1,5 +1,6 @@
 #include <QDir>
 #include <QString>
+#include <QDebug>
 
 #include	"core.hh"
 
@@ -7,8 +8,13 @@ QString  getPlayerCmd()
 {
   // std::cout << "still alive" << std::endl;
 #ifdef	WIN32
-  return ("\"\\os a moile\\asraf-build-Desktop_Qt_5_0_1_MinGW_32bit-Release\\release\\mplayer\"");
+  QString ret = QDir::currentPath().replace("/", "\\");
+
+  ret += "\\mplayer";
+  return (ret);
 #else
+  QString ret = QDir::currentPath().replace("/", "\\");
+
   return ("mplayer");
 #endif
 }
