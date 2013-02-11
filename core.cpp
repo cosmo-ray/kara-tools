@@ -8,14 +8,15 @@ QString  getPlayerCmd()
 {
   // std::cout << "still alive" << std::endl;
 #ifdef	WIN32
-  QString ret = QDir::currentPath().replace("/", "\\");
+    QString ret = "\"" + QDir::currentPath().replace("/", "\\");
 
   ret += "\\mplayer";
+  ret += "\"";
   return (ret);
 #else
   QString ret = QDir::currentPath().replace("/", "\\");
 
-  return ("mplayer");
+  return ("mplayer.exe");
 #endif
 }
 
