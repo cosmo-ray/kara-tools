@@ -16,7 +16,7 @@ QString  getPlayerCmd()
 #else
   QString ret = QDir::currentPath().replace("/", "\\");
 
-  return ("mplayer.exe");
+  return ("mplayer");
 #endif
 }
 
