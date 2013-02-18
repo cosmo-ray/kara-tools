@@ -49,6 +49,7 @@ private:
   void readKaraDirectory();
   void keyPressEvent(QKeyEvent *e);
   void clearDirList(void);
+  const QString &selectSub(const QString &);
 
 private slots:
   /*Files list slots*/

@@ -214,11 +214,12 @@ void MainWindow::start(void)
       listsKara += " -fs -ass";
       #else
       listsKara += "\"";
-      listsKara += _karaDirectory.replace("/", "\\");;
+      listsKara += _karaDirectory.replace("/", "\\");
       listsKara += "\\";
       listsKara += _karaList.item(i)->text();
       listsKara += "\"";
       listsKara += " -fs -ass";
+      qWarning(listsKara.toLocal8Bit().constData());
       #endif
       ++i;
     }
@@ -227,6 +228,16 @@ void MainWindow::start(void)
   execPlaylist(_player, listsKara);
 }
 
+const QString &MainWindow::selectSub(const QString &itemName)
+{
+    QString ret("\"");
+    ret += _karaDirectory.replace("/", "\\");
+    ret += "\\";
+    ret += itemName;
+    ret = ret.replace(".avi", ".ass").replace(".mkv", ".ass").replace(".mp4", ".ass").replace(".flv", ".ass");
+    ret += "\"";
+    return (ret);
+}
 
 void MainWindow::shufle(void)
 {
