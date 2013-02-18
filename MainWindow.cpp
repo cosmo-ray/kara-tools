@@ -16,7 +16,7 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
 			   _double(true), _beginEyecatch("begin eyecatch"), _bEye(false),
 			   _endEyecatch("end eyecatch"), _eEye(false),
 			   _player(getPlayerCmd()),
-               _karaDirectory("karaoke"), _eyecatchDirectory("eyecatch")
+			   _karaDirectory("karaoke"), _eyecatchDirectory("eyecatch")
 {
   QDesktopWidget *desktop = QApplication::desktop();
 
@@ -43,6 +43,7 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
   _vbox.addLayout(&_hboxLists);
   connector();
   readKaraDirectory();
+  readEyecatchDirectory();
 }
 
 MainWindow::~MainWindow()
@@ -211,17 +212,14 @@ void MainWindow::start(void)
 #endif
   if (_bEye | _eEye)
     {
-      QDir  dir(_eyecatchDirectory);
-      QStringList  eyecatchsName = dir.entryList();
-      eyecatchsName.pop_front();
-      eyecatchsName.pop_front();
-      int	len = eyecatchsName.size();
+      int	len = _eyecatchList.size();
       if (_bEye && len)
         {
+	  listsKara += " ";
           listsKara += "\"";
           listsKara += _eyecatchDirectory;
           listsKara += "/";
-          listsKara += _eyecatchList[rand() % len].toLocal8Bit().constData();
+          listsKara += _eyecatchList[rand() % len];
           listsKara += "\"";
           listsKara += " -fs";
         }
@@ -231,7 +229,7 @@ void MainWindow::start(void)
           endlist += "\"";
           endlist += _eyecatchDirectory;
           endlist += "/";
-          endlist += _eyecatchList[rand() % len].toLocal8Bit().constData();
+          endlist += _eyecatchList[rand() % len];
           endlist += "\"";
           endlist += " -fs";
         }
@@ -241,9 +239,12 @@ void MainWindow::start(void)
     {
       listsKara += " ";
       #ifndef WIN32
+      listsKara += "\"";
       listsKara += _karaDirectory;
       listsKara += "/";
-      listsKara += _karaList.item(i)->text().replace(" ", "\\ ").replace("'", "\\'").replace("&", "\\&").replace("(", "\\(").replace(")", "\\)").toLocal8Bit().constData();
+      listsKara += _karaList.item(i)->text();
+      // listsKara += _karaList.item(i)->text().replace(" ", "\\ ").replace("'", "\\'").replace("&", "\\&").replace("(", "\\(").replace(")", "\\)").toLocal8Bit().constData();
+      listsKara += "\"";
       listsKara += " -fs -ass";
       #else
       listsKara += "\"";
@@ -252,12 +253,9 @@ void MainWindow::start(void)
       listsKara += _karaList.item(i)->text();
       listsKara += "\"";
       listsKara += " -fs -ass";
-      qWarning(listsKara.toLocal8Bit().constData());
       #endif
       ++i;
     }
-
-
   execPlaylist(_player, listsKara);
 }
 
