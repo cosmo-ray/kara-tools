@@ -5,6 +5,12 @@
 #include	<string>
 #include	<iostream>
 
+#ifdef	WIN32
+#define	SLASH	'\\'
+#else
+#define	SLASH	'/'
+#endif
+
 QString  getPlayerCmd();
 void	 initRand();
 

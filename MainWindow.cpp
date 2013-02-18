@@ -238,22 +238,12 @@ void MainWindow::start(void)
   while (_karaList.item(i))
     {
       listsKara += " ";
-      #ifndef WIN32
-      listsKara += "\"";
-      listsKara += _karaDirectory;
-      listsKara += "/";
-      listsKara += _karaList.item(i)->text();
-      // listsKara += _karaList.item(i)->text().replace(" ", "\\ ").replace("'", "\\'").replace("&", "\\&").replace("(", "\\(").replace(")", "\\)").toLocal8Bit().constData();
-      listsKara += "\"";
-      listsKara += " -fs -ass";
-      #else
       listsKara += "\"";
       listsKara += _karaDirectory.replace("/", "\\");
-      listsKara += "\\";
+      listsKara += SLASH;
       listsKara += _karaList.item(i)->text();
       listsKara += "\"";
       listsKara += " -fs -ass";
-      #endif
       ++i;
     }
   execPlaylist(_player, listsKara);
