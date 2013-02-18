@@ -15,11 +15,11 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
 			   _noDouble("no double"),
 			   _double(true), _beginEyecatch("begin eyecatch"), _bEye(false),
 			   _endEyecatch("end eyecatch"), _eEye(false),
-			   _player(getPlayerCmd()),
 			   _karaDirectory("karaoke"), _eyecatchDirectory("eyecatch")
 {
   QDesktopWidget *desktop = QApplication::desktop();
 
+  changePlayer();
   initRand();
   resize(desktop->width(), desktop->height());
   setWindowTitle("Asamiya Saki will rape all your familly");
@@ -243,21 +243,18 @@ void MainWindow::start(void)
       listsKara += SLASH;
       listsKara += _karaList.item(i)->text();
       listsKara += "\"";
-      listsKara += " -fs -ass";
+      listsKara += _playerOpt; //" -fs -ass";
       ++i;
     }
   execPlaylist(_player, listsKara);
 }
 
-const QString &MainWindow::selectSub(const QString &itemName)
+
+template<>
+void  MainWindow::changePlayer<VLC>()
 {
-    QString ret("\"");
-    ret += _karaDirectory.replace("/", "\\");
-    ret += "\\";
-    ret += itemName;
-    ret = ret.replace(".avi", ".ass").replace(".mkv", ".ass").replace(".mp4", ".ass").replace(".flv", ".ass");
-    ret += "\"";
-    return (ret);
+  _playerOpt = " -f";
+  _player = getPlayerCmd<VLC>();
 }
 
 void MainWindow::shufle(void)

@@ -40,6 +40,7 @@ private:
   QString     _player;
   QString     _karaDirectory;
   QString     _eyecatchDirectory;
+  QString     _playerOpt;
   QStringList _eyecatchList;
   bool	      _double;
   bool	      _bEye;
@@ -53,6 +54,13 @@ private:
   void keyPressEvent(QKeyEvent *e); /*ctrl f*/
   void clearDirList(void);
   const QString &selectSub(const QString &);
+
+  template<int i = MPLAYER>
+  void  changePlayer()
+  {
+    _playerOpt = " -fs -ass";
+    _player = getPlayerCmd();
+  }
 
 private slots:
   /*Files list slots*/

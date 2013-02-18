@@ -4,7 +4,15 @@
 
 #include	"core.hh"
 
-QString  getPlayerCmd()
+
+template	<>
+QString  getPlayerCmd<VLC>()
+{
+  return ("vlc");
+}
+
+template	<>
+QString  getPlayerCmd<MPLAYER>()
 {
   // std::cout << "still alive" << std::endl;
 #ifdef	WIN32

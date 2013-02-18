@@ -11,7 +11,15 @@
 #define	SLASH	'/'
 #endif
 
+#define	VLC	0
+#define	MPLAYER	1
+
+template<int i = MPLAYER>
 QString  getPlayerCmd();
+
+template<>
+QString  getPlayerCmd<VLC>();
+
 void	 initRand();
 
 
