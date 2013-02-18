@@ -12,6 +12,8 @@
 #include <QKeyEvent>
 #include <QFileDialog>
 
+#include "core.hh"
+
 class	MainWindow : public QWidget
 {
   Q_OBJECT
@@ -37,6 +39,9 @@ private:
   QCheckBox   _endEyecatch;
   QString     _player;
   QString     _karaDirectory;
+  QString     _eyecatchDirectory;
+  QString     _playerOpt;
+  QStringList _eyecatchList;
   bool	      _double;
   bool	      _bEye;
   bool	      _eEye;
@@ -45,8 +50,12 @@ private:
   const MainWindow &operator=(const MainWindow &);
   void connector(void); //methode use to place connect function
   void readKaraDirectory();
-  void keyPressEvent(QKeyEvent *e);
+  void readEyecatchDirectory();
+  void keyPressEvent(QKeyEvent *e); /*ctrl f*/
   void clearDirList(void);
+  const QString &selectSub(const QString &);
+
+  void  changePlayer(int i);
 
 private slots:
   /*Files list slots*/

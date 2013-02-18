@@ -1,6 +1,4 @@
 #include	<iostream>
-#include	<stdio.h>
-#include	<string>
 #include	<QDir>
 #include	<QStringList>
 #include	<stdlib.h>
@@ -17,21 +15,12 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
 			   _noDouble("no double"),
 			   _double(true), _beginEyecatch("begin eyecatch"), _bEye(false),
 			   _endEyecatch("end eyecatch"), _eEye(false),
-			   #ifdef WIN32
-			   _player("\"\\os a moile\\asraf-build-Desktop_Qt_5_0_1_MinGW_32bit-Release\\release\\mplayer\""),
-			   #else
-			   _player("mplayer"),
-			   #endif
-			   _karaDirectory("karaoke")
+			   _karaDirectory("karaoke"), _eyecatchDirectory("eyecatch")
 {
   QDesktopWidget *desktop = QApplication::desktop();
 
-#ifdef	WIN32
-  srand(153);
-#else
-  srand(time(0));
-#endif
-
+  changePlayer(MPLAYER);
+  initRand();
   resize(desktop->width(), desktop->height());
   setWindowTitle("Asamiya Saki will rape all your familly");
   setWindowIcon(QIcon("resources/sukeban_deka_icone.jpg"));
@@ -54,6 +43,7 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
   _vbox.addLayout(&_hboxLists);
   connector();
   readKaraDirectory();
+  readEyecatchDirectory();
 }
 
 MainWindow::~MainWindow()
@@ -106,8 +96,35 @@ void	MainWindow::readKaraDirectory()
 	  || (*constIterator).contains(".flv")
 	  || (*constIterator).contains(".mp4")
       || (*constIterator).contains(".mp3")
+      || (*constIterator).contains(".ogv")
 	)
       _FilesList.addItem(*constIterator);
+    }
+}
+
+
+void	MainWindow::readEyecatchDirectory()
+{
+  QDir	dir(_eyecatchDirectory);
+  if (!dir.exists())
+    {
+      qWarning("Cannot find the eyecatch directory");
+      return ;
+    }
+
+  QStringList  filesName = dir.entryList();
+  QStringList::const_iterator constIterator;
+
+  for (constIterator = filesName.constBegin(); constIterator != filesName.constEnd();
+       ++constIterator)
+    {
+      if ((*constIterator).contains(".avi")
+      || (*constIterator).contains(".mkv")
+      || (*constIterator).contains(".flv")
+      || (*constIterator).contains(".mp4")
+      || (*constIterator).contains(".ogv")
+    )
+      _eyecatchList.push_back(*constIterator);
     }
 }
 
@@ -136,7 +153,6 @@ void	MainWindow::rmItemFromKaraList(QListWidgetItem *)
 
 
 /*ctrl f*/
-
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
   static bool	hasBeenPress = false;
@@ -180,6 +196,21 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
     toFind += e->text();
 }
 
+void  MainWindow::changePlayer(int i)
+{
+  if (i == MPLAYER)
+    {
+      _playerOpt = " -fs -ass";
+      _player = getPlayerCmd();
+    }
+  else
+    {
+      _playerOpt = " -f";
+      _player = getPlayerCmd<VLC>();      
+    }
+}
+
+
 /*Button slots*/
 
 void MainWindow::start(void)
@@ -196,38 +227,46 @@ void MainWindow::start(void)
 #endif
   if (_bEye | _eEye)
     {
-      QDir  dir("eyecatch");
-      QStringList  eyecatchsName = dir.entryList();
-      eyecatchsName.pop_front();
-      eyecatchsName.pop_front();
-      int	len = eyecatchsName.size();
+      int	len = _eyecatchList.size();
       if (_bEye && len)
-	{
-	  listsKara += " ./eyecatch/";
-	  listsKara += eyecatchsName[rand() % len].replace(" ", "\\ ").toLocal8Bit().constData();
-	  listsKara += " -fs";
-	}
-      if (_eEye && len)
-	{
-	  endlist += " ./eyecatch/";
-	  endlist += eyecatchsName[rand() % len].replace(" ", "\\ ").toLocal8Bit().constData();
-	  endlist += " -fs";
-	}
+        {
+	  listsKara += " ";
+          listsKara += "\"";
+          listsKara += _eyecatchDirectory;
+          listsKara += "/";
+          listsKara += _eyecatchList[rand() % len];
+          listsKara += "\"";
+          listsKara += " -fs";
+        }
+         if (_eEye && len)
+        {
+          endlist += " ";
+          endlist += "\"";
+          endlist += _eyecatchDirectory;
+          endlist += "/";
+          endlist += _eyecatchList[rand() % len];
+          endlist += "\"";
+          endlist += " -fs";
+        }
     }
 
   while (_karaList.item(i))
     {
       listsKara += " ";
+<<<<<<< HEAD
       #ifndef WIN32
       listsKara += _karaDirectory;
       listsKara += "/";
       listsKara += _karaList.item(i)->text().replace(" ", "\\ ").replace("'", "\\'").replace("&", "\\&").replace("(", "\\(").replace(")", "\\)").toLocal8Bit().constData();
       #else
+=======
+>>>>>>> 975ae2524da813d107e20d9b629f88ff20a4c57e
       listsKara += "\"";
-      listsKara += _karaDirectory.replace("/", "\\");;
-      listsKara += "\\";
+      listsKara += _karaDirectory.replace("/", "\\");
+      listsKara += SLASH;
       listsKara += _karaList.item(i)->text();
       listsKara += "\"";
+<<<<<<< HEAD
       #endif
       listsKara += " -fs -ass";
       ++i;
@@ -247,8 +286,13 @@ void MainWindow::start(void)
     );
  exit(0);
 #endif
+=======
+      listsKara += _playerOpt; //" -fs -ass";
+      ++i;
+    }
+  execPlaylist(_player, listsKara);
+>>>>>>> 975ae2524da813d107e20d9b629f88ff20a4c57e
 }
-
 
 void MainWindow::shufle(void)
 {
