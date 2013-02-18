@@ -16,7 +16,7 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
 			   _double(true), _beginEyecatch("begin eyecatch"), _bEye(false),
 			   _endEyecatch("end eyecatch"), _eEye(false),
 			   _player(getPlayerCmd()),
-			   _karaDirectory("karaoke")
+               _karaDirectory("karaoke"), _eyecatchDirectory("eyecatch")
 {
   QDesktopWidget *desktop = QApplication::desktop();
 
@@ -95,8 +95,35 @@ void	MainWindow::readKaraDirectory()
 	  || (*constIterator).contains(".flv")
 	  || (*constIterator).contains(".mp4")
       || (*constIterator).contains(".mp3")
+      || (*constIterator).contains(".ogv")
 	)
       _FilesList.addItem(*constIterator);
+    }
+}
+
+
+void	MainWindow::readEyecatchDirectory()
+{
+  QDir	dir(_eyecatchDirectory);
+  if (!dir.exists())
+    {
+      qWarning("Cannot find the eyecatch directory");
+      return ;
+    }
+
+  QStringList  filesName = dir.entryList();
+  QStringList::const_iterator constIterator;
+
+  for (constIterator = filesName.constBegin(); constIterator != filesName.constEnd();
+       ++constIterator)
+    {
+      if ((*constIterator).contains(".avi")
+      || (*constIterator).contains(".mkv")
+      || (*constIterator).contains(".flv")
+      || (*constIterator).contains(".mp4")
+      || (*constIterator).contains(".ogv")
+    )
+      _eyecatchList.push_back(*constIterator);
     }
 }
 
@@ -125,7 +152,6 @@ void	MainWindow::rmItemFromKaraList(QListWidgetItem *)
 
 
 /*ctrl f*/
-
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
   static bool	hasBeenPress = false;
@@ -185,23 +211,30 @@ void MainWindow::start(void)
 #endif
   if (_bEye | _eEye)
     {
-      QDir  dir("eyecatch");
+      QDir  dir(_eyecatchDirectory);
       QStringList  eyecatchsName = dir.entryList();
       eyecatchsName.pop_front();
       eyecatchsName.pop_front();
       int	len = eyecatchsName.size();
       if (_bEye && len)
-	{
-	  listsKara += " ./eyecatch/";
-	  listsKara += eyecatchsName[rand() % len].replace(" ", "\\ ").toLocal8Bit().constData();
-	  listsKara += " -fs";
-	}
-      if (_eEye && len)
-	{
-	  endlist += " ./eyecatch/";
-	  endlist += eyecatchsName[rand() % len].replace(" ", "\\ ").toLocal8Bit().constData();
-	  endlist += " -fs";
-	}
+        {
+          listsKara += "\"";
+          listsKara += _eyecatchDirectory;
+          listsKara += "/";
+          listsKara += _eyecatchList[rand() % len].toLocal8Bit().constData();
+          listsKara += "\"";
+          listsKara += " -fs";
+        }
+         if (_eEye && len)
+        {
+          endlist += " ";
+          endlist += "\"";
+          endlist += _eyecatchDirectory;
+          endlist += "/";
+          endlist += _eyecatchList[rand() % len].toLocal8Bit().constData();
+          endlist += "\"";
+          endlist += " -fs";
+        }
     }
 
   while (_karaList.item(i))

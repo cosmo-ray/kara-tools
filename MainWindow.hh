@@ -39,6 +39,8 @@ private:
   QCheckBox   _endEyecatch;
   QString     _player;
   QString     _karaDirectory;
+  QString     _eyecatchDirectory;
+  QStringList _eyecatchList;
   bool	      _double;
   bool	      _bEye;
   bool	      _eEye;
@@ -47,7 +49,8 @@ private:
   const MainWindow &operator=(const MainWindow &);
   void connector(void); //methode use to place connect function
   void readKaraDirectory();
-  void keyPressEvent(QKeyEvent *e);
+  void readEyecatchDirectory();
+  void keyPressEvent(QKeyEvent *e); /*ctrl f*/
   void clearDirList(void);
   const QString &selectSub(const QString &);
 
