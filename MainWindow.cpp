@@ -19,7 +19,7 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
 {
   QDesktopWidget *desktop = QApplication::desktop();
 
-  changePlayer();
+  changePlayer(MPLAYER);
   initRand();
   resize(desktop->width(), desktop->height());
   setWindowTitle("Asamiya Saki will rape all your familly");
@@ -196,6 +196,21 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
     toFind += e->text();
 }
 
+void  MainWindow::changePlayer(int i)
+{
+  if (i == MPLAYER)
+    {
+      _playerOpt = " -fs -ass";
+      _player = getPlayerCmd();
+    }
+  else
+    {
+      _playerOpt = " -f";
+      _player = getPlayerCmd<VLC>();      
+    }
+}
+
+
 /*Button slots*/
 
 void MainWindow::start(void)
@@ -247,14 +262,6 @@ void MainWindow::start(void)
       ++i;
     }
   execPlaylist(_player, listsKara);
-}
-
-
-template<>
-void  MainWindow::changePlayer<VLC>()
-{
-  _playerOpt = " -f";
-  _player = getPlayerCmd<VLC>();
 }
 
 void MainWindow::shufle(void)

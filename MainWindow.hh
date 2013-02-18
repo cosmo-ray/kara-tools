@@ -55,12 +55,7 @@ private:
   void clearDirList(void);
   const QString &selectSub(const QString &);
 
-  template<int i = MPLAYER>
-  void  changePlayer()
-  {
-    _playerOpt = " -fs -ass";
-    _player = getPlayerCmd();
-  }
+  void  changePlayer(int i);
 
 private slots:
   /*Files list slots*/
