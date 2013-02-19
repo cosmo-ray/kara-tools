@@ -24,6 +24,7 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
   resize(desktop->width(), desktop->height());
   setWindowTitle("Asamiya Saki will rape all your familly");
   setWindowIcon(QIcon("resources/sukeban_deka_icone.jpg"));
+  setStyleSheet("QWidget {background-image: url(resources/resources.png) }");
 
   _hboxLists.addWidget(&_FilesList);
   _hboxLists.addWidget(&_karaList);
@@ -253,45 +254,15 @@ void MainWindow::start(void)
   while (_karaList.item(i))
     {
       listsKara += " ";
-<<<<<<< HEAD
-      #ifndef WIN32
-      listsKara += _karaDirectory;
-      listsKara += "/";
-      listsKara += _karaList.item(i)->text().replace(" ", "\\ ").replace("'", "\\'").replace("&", "\\&").replace("(", "\\(").replace(")", "\\)").toLocal8Bit().constData();
-      #else
-=======
->>>>>>> 975ae2524da813d107e20d9b629f88ff20a4c57e
       listsKara += "\"";
       listsKara += _karaDirectory.replace("/", "\\");
       listsKara += SLASH;
       listsKara += _karaList.item(i)->text();
       listsKara += "\"";
-<<<<<<< HEAD
-      #endif
-      listsKara += " -fs -ass";
-      ++i;
-    }
-  listsKara += endlist;
-#ifdef WIN32
-  system(QString(
-  "\"" + _player
-    + listsKara + "\""
-    ).toLocal8Bit().constData()
-    );
-#else
- system(QString(
-  _player
-    + listsKara
-    ).toLocal8Bit().constData()
-    );
- exit(0);
-#endif
-=======
       listsKara += _playerOpt; //" -fs -ass";
       ++i;
     }
   execPlaylist(_player, listsKara);
->>>>>>> 975ae2524da813d107e20d9b629f88ff20a4c57e
 }
 
 void MainWindow::shufle(void)
