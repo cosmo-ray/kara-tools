@@ -4,6 +4,7 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QWidget>
+#include <QMenuBar>
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QVBoxLayout>
@@ -11,6 +12,7 @@
 #include <QCheckBox>
 #include <QKeyEvent>
 #include <QFileDialog>
+#include <QMenu>
 
 #include "core.hh"
 
@@ -24,6 +26,9 @@ public:
 private:
 
   QVBoxLayout _vbox;
+  QMenuBar    _menuBar;
+  QMenu	      _PlayerMenu;
+  QAction     *_changePlayerLocation;
   QHBoxLayout _hboxLists;
   QListWidget _FilesList;
   QListWidget _karaList;
@@ -73,6 +78,7 @@ private slots:
   void endEyecatch(void);
   void clearPlaylist(void);
   void changeDirectory(void);
+  void changePlayerLocation(void);
 };
 
 #endif

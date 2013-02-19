@@ -10,7 +10,7 @@
 #include	"MainWindow.hh"
 
 MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
-			   _pick("pick"), _clearPlaylist("clear"),
+			   _pick("pick"), _clearPlaylist("clear"), _PlayerMenu("Player options"),
 			   _changeDirectory("change directory"),
 			   _noDouble("no double"),
 			   _double(true), _beginEyecatch("begin eyecatch"), _bEye(false),
@@ -24,7 +24,6 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
   resize(desktop->width(), desktop->height());
   setWindowTitle("Asamiya Saki will rape all your familly");
   setWindowIcon(QIcon("resources/sukeban_deka_icone.jpg"));
-  setStyleSheet("QWidget {background-image: url(resources/resources.png) }");
 
   _hboxLists.addWidget(&_FilesList);
   _hboxLists.addWidget(&_karaList);
@@ -39,6 +38,11 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
   _hboxOptions.addWidget(&_beginEyecatch);
   _hboxOptions.addWidget(&_endEyecatch);
   
+  _changePlayerLocation = _PlayerMenu.addAction("select player location");
+
+  _menuBar.addMenu(&_PlayerMenu);
+
+  _vbox.addWidget(&_menuBar);
   _vbox.addLayout(&_hboxOptions);
   _vbox.addLayout(&_hbox2ndOptions);
   _vbox.addLayout(&_hboxLists);
@@ -49,6 +53,7 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
 
 MainWindow::~MainWindow()
 {
+  delete _changePlayerLocation;
 }
 
 void	MainWindow::connector(void)
@@ -62,6 +67,9 @@ void	MainWindow::connector(void)
 	  SIGNAL(itemActivated(QListWidgetItem *)),
 	  this,
 	  SLOT(rmItemFromKaraList(QListWidgetItem *)));
+
+  /*actions*/
+  connect(_changePlayerLocation, SIGNAL(triggered()), this, SLOT(changePlayerLocation(void)));
 
   /*button*/
   connect(&_start, SIGNAL(clicked(bool)), this, SLOT(start(void)));
@@ -308,6 +316,16 @@ void MainWindow::changeDirectory(void)
     }
   clearDirList();
   readKaraDirectory();
+}
+
+void MainWindow::changePlayerLocation(void)
+{
+  QString path = QFileDialog::getOpenFileName(0);
+
+  if ( path.isNull() == false )
+    {
+      _player = path;
+    }
 }
 
 
