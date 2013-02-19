@@ -29,6 +29,8 @@ private:
   QMenuBar    _menuBar;
   QMenu	      _PlayerMenu;
   QAction     *_changePlayerLocation;
+  QAction     *_selectMplayer;
+  QAction     *_selectVLC;
   QHBoxLayout _hboxLists;
   QListWidget _FilesList;
   QListWidget _karaList;
@@ -79,6 +81,8 @@ private slots:
   void clearPlaylist(void);
   void changeDirectory(void);
   void changePlayerLocation(void);
+  void selectVLC(void);
+  void selectMplayer(void);
 };
 
 #endif

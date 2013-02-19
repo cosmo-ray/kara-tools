@@ -39,6 +39,8 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
   _hboxOptions.addWidget(&_endEyecatch);
   
   _changePlayerLocation = _PlayerMenu.addAction("select player location");
+  _selectMplayer = _PlayerMenu.addAction("select Mplayer as Player");
+  _selectVLC = _PlayerMenu.addAction("select VLC as Player");
 
   _menuBar.addMenu(&_PlayerMenu);
 
@@ -70,6 +72,8 @@ void	MainWindow::connector(void)
 
   /*actions*/
   connect(_changePlayerLocation, SIGNAL(triggered()), this, SLOT(changePlayerLocation(void)));
+  connect(_selectMplayer, SIGNAL(triggered()), this, SLOT(selectMplayer(void)));
+  connect(_selectVLC, SIGNAL(triggered()), this, SLOT(selectVLC(void)));
 
   /*button*/
   connect(&_start, SIGNAL(clicked(bool)), this, SLOT(start(void)));
@@ -328,6 +332,15 @@ void MainWindow::changePlayerLocation(void)
     }
 }
 
+void MainWindow::selectVLC(void)
+{
+  changePlayer(VLC);
+}
+
+void MainWindow::selectMplayer(void)
+{
+  changePlayer(MPLAYER);
+}
 
  void MainWindow::noDouble(void)
  {
