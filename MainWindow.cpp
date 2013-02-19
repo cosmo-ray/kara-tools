@@ -173,6 +173,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 
   if ( (e->key() == Qt::Key_F) && QApplication::keyboardModifiers() && Qt::ControlModifier)
     {
+      std::cout << "ctrl f" << std::endl;
       if (!hasBeenPress)
 	hasBeenPress = true;
       else
@@ -202,10 +203,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 	  ++i;
 	}
     }
-  else if(hasBeenPress && ((e->text()[0] >= 'a' && e->text()[0] <= 'z')
-			   || (e->text()[0] >= '0' && e->text()[0] <= '9')
-			   || (e->text()[0]  == ' ' || e->text()[0] == '\''))
-	  )
+  else if(hasBeenPress && isAlphaNum(e->text()[0]) )
     toFind += e->text();
 }
 

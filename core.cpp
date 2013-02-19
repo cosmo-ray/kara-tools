@@ -63,3 +63,12 @@ void    toWinPath(QString &path)
   exit(0);
 #endif
 }
+
+ bool isAlphaNum(QCharRef c)
+ {
+ return ((c >= 'a' && c <= 'z')
+         || (c >= '0' && c <= '9')
+         || (c  == ' ' || c == '\'')
+         || (c >= 'A' && c <= 'Z'));
+ }
+
