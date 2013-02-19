@@ -231,7 +231,7 @@ void MainWindow::start(void)
   int	i = 0;
   QString	listsKara;
   QString	endlist;
-#ifndef WIN32
+#ifndef Q_OS_WIN32
   pid_t		forkRet;
 
   forkRet = fork();
@@ -328,6 +328,7 @@ void MainWindow::changePlayerLocation(void)
 
   if ( path.isNull() == false )
     {
+      //toWinPath(path);
       _player = path;
     }
 }
