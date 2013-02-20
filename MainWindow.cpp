@@ -247,7 +247,7 @@ void MainWindow::start(void)
           listsKara += "/";
           listsKara += _eyecatchList[rand() % len];
           listsKara += "\"";
-          listsKara += " -fs";
+          listsKara += _playerOpt;
         }
          if (_eEye && len)
         {
@@ -257,7 +257,7 @@ void MainWindow::start(void)
           endlist += "/";
           endlist += _eyecatchList[rand() % len];
           endlist += "\"";
-          endlist += " -fs";
+          endlist += _playerOpt;
         }
     }
 
