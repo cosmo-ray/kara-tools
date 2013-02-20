@@ -9,7 +9,7 @@
 
 #include	"MainWindow.hh"
 
-MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
+MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shuffle"),
 			   _pick("pick"), _clearPlaylist("clear"), _PlayerMenu("Player options"),
 			   _changeDirectory("change directory"),
 			   _noDouble("no double"),
