@@ -244,7 +244,7 @@ void MainWindow::start(void)
 	  listsKara += " ";
           listsKara += "\"";
           listsKara += _eyecatchDirectory;
-          listsKara += "/";
+          listsKara += SLASH;
           listsKara += _eyecatchList[rand() % len];
           listsKara += "\"";
           listsKara += _playerOpt;
@@ -254,7 +254,7 @@ void MainWindow::start(void)
           endlist += " ";
           endlist += "\"";
           endlist += _eyecatchDirectory;
-          endlist += "/";
+          endlist += SLASH;
           endlist += _eyecatchList[rand() % len];
           endlist += "\"";
           endlist += _playerOpt;
@@ -265,7 +265,7 @@ void MainWindow::start(void)
     {
       listsKara += " ";
       listsKara += "\"";
-      listsKara += _karaDirectory.replace("/", "\\");
+      listsKara += _karaDirectory.replace('/', SLASH);
       listsKara += SLASH;
       listsKara += _karaList.item(i)->text();
       listsKara += "\"";
