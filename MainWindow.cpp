@@ -211,7 +211,7 @@ void  MainWindow::changePlayer(int i)
 {
   if (i == MPLAYER)
     {
-      _playerOpt = " -fs -ass";
+      _playerOpt = " -fs -ass -framedrop -autosync 30 -mc 2.0 ";
       _player = getPlayerCmd();
     }
   else
@@ -242,7 +242,7 @@ void MainWindow::start(void)
       if (_bEye && len)
         {
 	  listsKara += " ";
-          listsKara += "\"";
+	  listsKara += "\"";
           listsKara += _eyecatchDirectory;
           listsKara += SLASH;
           listsKara += _eyecatchList[rand() % len];
