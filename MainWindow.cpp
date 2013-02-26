@@ -9,7 +9,7 @@
 
 #include	"MainWindow.hh"
 
-MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shufle"),
+MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shuffle"),
 			   _pick("pick"), _clearPlaylist("clear"), _PlayerMenu("Player options"),
 			   _changeDirectory("change directory"),
 			   _noDouble("no double"),
@@ -174,6 +174,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 
   if ( (e->key() == Qt::Key_F) && QApplication::keyboardModifiers() && Qt::ControlModifier)
     {
+      std::cout << "ctrl f" << std::endl;
       if (!hasBeenPress)
 	hasBeenPress = true;
       else
@@ -203,10 +204,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 	  ++i;
 	}
     }
-  else if(hasBeenPress && ((e->text()[0] >= 'a' && e->text()[0] <= 'z')
-			   || (e->text()[0] >= '0' && e->text()[0] <= '9')
-			   || (e->text()[0]  == ' ' || e->text()[0] == '\''))
-	  )
+  else if(hasBeenPress && isAlphaNum(e->text()[0]) )
     toFind += e->text();
 }
 
@@ -214,7 +212,7 @@ void  MainWindow::changePlayer(int i)
 {
   if (i == MPLAYER)
     {
-      _playerOpt = " -fs -ass";
+      _playerOpt = " -fs -ass -framedrop -autosync 30 -mc 2.0 ";
       _player = getPlayerCmd();
     }
   else
@@ -232,7 +230,7 @@ void MainWindow::start(void)
   int	i = 0;
   QString	listsKara;
   QString	endlist;
-#ifndef WIN32
+#ifndef Q_OS_WIN32
   pid_t		forkRet;
 
   forkRet = fork();
@@ -245,22 +243,22 @@ void MainWindow::start(void)
       if (_bEye && len)
         {
 	  listsKara += " ";
-          listsKara += "\"";
+	  listsKara += "\"";
           listsKara += _eyecatchDirectory;
-          listsKara += "/";
+          listsKara += SLASH;
           listsKara += _eyecatchList[rand() % len];
           listsKara += "\"";
-          listsKara += " -fs";
+          listsKara += _playerOpt;
         }
          if (_eEye && len)
         {
           endlist += " ";
           endlist += "\"";
           endlist += _eyecatchDirectory;
-          endlist += "/";
+          endlist += SLASH;
           endlist += _eyecatchList[rand() % len];
           endlist += "\"";
-          endlist += " -fs";
+          endlist += _playerOpt;
         }
     }
 
@@ -268,7 +266,7 @@ void MainWindow::start(void)
     {
       listsKara += " ";
       listsKara += "\"";
-      listsKara += _karaDirectory.replace("/", "\\");
+      listsKara += _karaDirectory.replace('/', SLASH);
       listsKara += SLASH;
       listsKara += _karaList.item(i)->text();
       listsKara += "\"";
@@ -329,6 +327,7 @@ void MainWindow::changePlayerLocation(void)
 
   if ( path.isNull() == false )
     {
+      //toWinPath(path);
       _player = path;
     }
 }

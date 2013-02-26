@@ -15,7 +15,7 @@ template	<>
 QString  getPlayerCmd<MPLAYER>()
 {
   // std::cout << "still alive" << std::endl;
-#ifdef	WIN32
+#ifdef	Q_OS_WIN32
     QString ret = "\"" + QDir::currentPath().replace("/", "\\");
 
   ret += "\\mplayer";
@@ -30,18 +30,27 @@ QString  getPlayerCmd<MPLAYER>()
 
 void	initRand()
 {
-#ifdef	WIN32
+#ifdef	Q_OS_WIN32
   srand(153);
 #else
   srand(time(0));
 #endif
 }
  
+void    toWinPath(QString &path)
+{
+#ifdef	Q_OS_WIN32
+    path = path.replace("/", "\\");
+#else
+    (void) path;
+#endif
+}
+
  void	execPlaylist(const QString &player, const QString &listsKara)
 {
-#ifdef WIN32
+#ifdef Q_OS_WIN32
   system(QString(
-  "\"" + player
+  QString("\"") + "\"" + player + "\""
     + listsKara + "\""
     ).toLocal8Bit().constData()
     );
@@ -54,3 +63,12 @@ void	initRand()
   exit(0);
 #endif
 }
+
+ bool isAlphaNum(QCharRef c)
+ {
+ return ((c >= 'a' && c <= 'z')
+         || (c >= '0' && c <= '9')
+         || (c  == ' ' || c == '\'')
+         || (c >= 'A' && c <= 'Z'));
+ }
+
