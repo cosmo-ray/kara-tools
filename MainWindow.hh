@@ -13,6 +13,7 @@
 #include <QKeyEvent>
 #include <QFileDialog>
 #include <QMenu>
+#include <QLineEdit>
 
 #include "core.hh"
 
@@ -44,6 +45,7 @@ private:
   QCheckBox   _noDouble;
   QCheckBox   _beginEyecatch;
   QCheckBox   _endEyecatch;
+  QLineEdit   _find;
   QString     _player;
   QString     _karaDirectory;
   QString     _eyecatchDirectory;

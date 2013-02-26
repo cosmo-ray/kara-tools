@@ -49,6 +49,8 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shuffle"),
   _vbox.addLayout(&_hboxOptions);
   _vbox.addLayout(&_hbox2ndOptions);
   _vbox.addLayout(&_hboxLists);
+  _vbox.addWidget(&_find);
+  _find.hide();
   connector();
   readKaraDirectory();
   readEyecatchDirectory();
@@ -170,42 +172,48 @@ void	MainWindow::rmItemFromKaraList(QListWidgetItem *)
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
   static bool	hasBeenPress = false;
-  static QString	toFind;
+  // static QString	toFind;
 
   if ( (e->key() == Qt::Key_F) && QApplication::keyboardModifiers() && Qt::ControlModifier)
     {
-      std::cout << "ctrl f" << std::endl;
       if (!hasBeenPress)
-	hasBeenPress = true;
+	{
+	  _find.show();
+	  hasBeenPress = true;
+	}
       else
 	{
+	  _find.hide();
 	  hasBeenPress = false;
-	  toFind.clear();
-	  clearDirList();
-	  readKaraDirectory();
+	  // toFind.clear();
+	  // clearDirList();
+	  // readKaraDirectory();
 	}
     }
-  if (hasBeenPress && toFind != "")
-    {
-      QList<QListWidgetItem *> iList; 
-      int	i = 0;
-      int	end;
+  // if (hasBeenPress && toFind != "")
+  //   {
+  //     QList<QListWidgetItem *> iList; 
+  //     int	i = 0;
+  //     int	end;
  
-      toFind += e->text();
-      iList = _FilesList.findItems(toFind, Qt::MatchContains);
-      clearDirList();
-      end = iList.size();
-      std::cout << e->text().toLocal8Bit().constData() << std::endl;
-      std::cout << end << std::endl;
-      std::cout << toFind.toLocal8Bit().constData() << std::endl;
-      while (i < end)
-	{
-	  _FilesList.addItem(iList[i]->text());
-	  ++i;
-	}
-    }
-  else if(hasBeenPress && isAlphaNum(e->text()[0]) )
-    toFind += e->text();
+  //     toFind += e->text();
+  //     iList = _FilesList.findItems(toFind, Qt::MatchContains);
+  //     clearDirList();
+  //     end = iList.size();
+  //     std::cout << e->text().toLocal8Bit().constData() << std::endl;
+  //     std::cout << end << std::endl;
+  //     std::cout << toFind.toLocal8Bit().constData() << std::endl;
+  //     while (i < end)
+  // 	{
+  // 	  _FilesList.addItem(iList[i]->text());
+  // 	  ++i;
+  // 	}
+  //   }
+  // else if(hasBeenPress && isAlphaNum(e->text()[0]) )
+  //   {
+  //     std::cout << "add " << e->text().toLocal8Bit().constData()[0] << std::endl;
+  //     toFind += e->text();
+  //   }
 }
 
 void  MainWindow::changePlayer(int i)
