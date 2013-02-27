@@ -46,6 +46,7 @@ private:
   QCheckBox   _beginEyecatch;
   QCheckBox   _endEyecatch;
   QLineEdit   _find;
+  QLineEdit   _find2;
   QString     _player;
   QString     _karaDirectory;
   QString     _eyecatchDirectory;
@@ -54,6 +55,8 @@ private:
   bool	      _double;
   bool	      _bEye;
   bool	      _eEye;
+int _ctrlg;
+bool _ctrlgcheck;
 
   MainWindow(const MainWindow &);
   const MainWindow &operator=(const MainWindow &);
@@ -85,6 +88,9 @@ private slots:
   void changePlayerLocation(void);
   void selectVLC(void);
   void selectMplayer(void);
+
+  void ctrlfedited(void);
+void ctrlgedited(void);
 };
 
 #endif
