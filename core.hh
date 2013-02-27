@@ -4,6 +4,7 @@
 #include	<stdio.h>
 #include	<string>
 #include	<iostream>
+#include	<QString>
 
 #ifdef	WIN32
 #define	SLASH	'\\'

@@ -16,8 +16,8 @@ if (MINGW)
 endif()
 
 
-set(asraf_SOURCES main.cpp MainWindow.cpp core.cpp)
-set(asraf_HEADERS MainWindow.hh core.hh)
+set(asraf_SOURCES main.cpp Media.cpp MainWindow.cpp core.cpp)
+set(asraf_HEADERS Media.hh MainWindow.hh core.hh)
 set(EXECUTABLE_OUTPUT_PATH ../)
 
 QT4_WRAP_CPP(asraf_HEADERS_MOC ${asraf_HEADERS})
