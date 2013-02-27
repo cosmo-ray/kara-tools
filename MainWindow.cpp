@@ -24,8 +24,7 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shuffle"),
   resize(desktop->width(), desktop->height());
   setWindowTitle("Asamiya Saki will rape all your familly");
   setWindowIcon(QIcon("resources/sukeban_deka_icone.jpg"));
-  setWindowFlags(Qt::Window);
-
+  setWindowFlags(Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
   _hboxLists.addWidget(&_FilesList);
   _hboxLists.addWidget(&_karaList);
 
@@ -179,43 +178,38 @@ void	MainWindow::rmItemFromKaraList(QListWidgetItem *)
 /*ctrl f*/
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
-  static bool	hasBeenPress = false;
+  static bool	hasCtlrFBeenPress = false;
+  static bool	hasCtlrGBeenPress = false;
 
   // static QString	toFind;
 
   if ( (e->key() == Qt::Key_F) && QApplication::keyboardModifiers() && Qt::ControlModifier)
     {
-      if (!hasBeenPress)
+      if (!hasCtlrFBeenPress)
 	{
 	  _find.show();
 	  _find.setFocus();
-	  hasBeenPress = true;
+      hasCtlrFBeenPress = true;
 	}
       else
 	{
 	  _find.hide();
-	  hasBeenPress = false;
-	  // toFind.clear();
-	  // clearDirList();
-	  // readKaraDirectory();
+      hasCtlrFBeenPress = false;
 	}
     }
   if ( (e->key() == Qt::Key_G) && QApplication::keyboardModifiers() && Qt::ControlModifier)
     {
-      if (!hasBeenPress)
+      if (!hasCtlrGBeenPress)
 	{
 	  _find2.show();
 	  _find2.setFocus();
 	  _ctrlg = -1;
-	  hasBeenPress = true;
+      hasCtlrGBeenPress = true;
 	}
       else
 	{
 	  _find2.hide();
-	  hasBeenPress = false;
-	  // toFind.clear();
-	  // clearDirList();
-	  // readKaraDirectory();
+      hasCtlrGBeenPress = false;
 	}
     }
  if (e->key() == Qt::Key_Down ) {
@@ -226,31 +220,6 @@ if (e->key() == Qt::Key_Up && _ctrlg > 0) {
 _ctrlg--;
 MainWindow::ctrlgedited();
 }
-  // if (hasBeenPress && toFind != "")
-  // if (hasBeenPress && toFind != "")
-  //   {
-  //     QList<QListWidgetItem *> iList; 
-  //     int	i = 0;
-  //     int	end;
- 
-  //     toFind += e->text();
-  //     iList = _FilesList.findItems(toFind, Qt::MatchContains);
-  //     clearDirList();
-  //     end = iList.size();
-  //     std::cout << e->text().toLocal8Bit().constData() << std::endl;
-  //     std::cout << end << std::endl;
-  //     std::cout << toFind.toLocal8Bit().constData() << std::endl;
-  //     while (i < end)
-  // 	{
-  // 	  _FilesList.addItem(iList[i]->text());
-  // 	  ++i;
-  // 	}
-  //   }
-  // else if(hasBeenPress && isAlphaNum(e->text()[0]) )
-  //   {
-  //     std::cout << "add " << e->text().toLocal8Bit().constData()[0] << std::endl;
-  //     toFind += e->text();
-  //   }
 }
 
 void  MainWindow::changePlayer(int i)
@@ -299,7 +268,7 @@ void MainWindow::start(void)
         {
           endlist += " ";
           endlist += "\"";
-          endlist += _eyecatchDirectory;
+          endlist += _eyecatchDirectory.replace('/', SLASH);
           endlist += SLASH;
           endlist += _eyecatchList[rand() % len];
           endlist += "\"";
