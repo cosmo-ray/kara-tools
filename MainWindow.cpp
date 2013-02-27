@@ -281,6 +281,7 @@ void MainWindow::start(void)
       listsKara += _playerOpt; //" -fs -ass";
       ++i;
     }
+  listsKara += endlist;
   execPlaylist(_player, listsKara);
 }
 
