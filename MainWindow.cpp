@@ -24,8 +24,7 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shuffle"),
   resize(desktop->width(), desktop->height());
   setWindowTitle("Asamiya Saki will rape all your familly");
   setWindowIcon(QIcon("resources/sukeban_deka_icone.jpg"));
-  setWindowFlags(Qt::Window);
-
+  setWindowFlags(Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
   _hboxLists.addWidget(&_FilesList);
   _hboxLists.addWidget(&_karaList);
 
@@ -43,6 +42,8 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shuffle"),
   _selectMplayer = _PlayerMenu.addAction("select Mplayer as Player");
   _selectVLC = _PlayerMenu.addAction("select VLC as Player");
 
+//  _ctrlfedited = _PlayerMenu.addAction("ctrlfedited");
+
   _menuBar.addMenu(&_PlayerMenu);
 
   _vbox.addWidget(&_menuBar);
@@ -51,6 +52,8 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shuffle"),
   _vbox.addLayout(&_hboxLists);
   _vbox.addWidget(&_find);
   _find.hide();
+ _vbox.addWidget(&_find2);
+  _find2.hide();
   connector();
   readKaraDirectory();
   readEyecatchDirectory();
@@ -89,6 +92,10 @@ void	MainWindow::connector(void)
   connect(&_noDouble, SIGNAL(stateChanged(int)), this, SLOT(noDouble(void)));
   connect(&_beginEyecatch, SIGNAL(stateChanged(int)), this, SLOT(beginEyecatch(void)));
   connect(&_endEyecatch, SIGNAL(stateChanged(int)), this, SLOT(endEyecatch(void)));
+
+  /* mine */
+connect(&_find, SIGNAL(textEdited(QString)), this, SLOT(ctrlfedited(void)));
+connect(&_find2, SIGNAL(textEdited(QString)), this, SLOT(ctrlgedited(void)));
 }
 
 
@@ -171,49 +178,48 @@ void	MainWindow::rmItemFromKaraList(QListWidgetItem *)
 /*ctrl f*/
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
-  static bool	hasBeenPress = false;
+  static bool	hasCtlrFBeenPress = false;
+  static bool	hasCtlrGBeenPress = false;
+
   // static QString	toFind;
 
   if ( (e->key() == Qt::Key_F) && QApplication::keyboardModifiers() && Qt::ControlModifier)
     {
-      if (!hasBeenPress)
+      if (!hasCtlrFBeenPress)
 	{
 	  _find.show();
-	  hasBeenPress = true;
+	  _find.setFocus();
+      hasCtlrFBeenPress = true;
 	}
       else
 	{
 	  _find.hide();
-	  hasBeenPress = false;
-	  // toFind.clear();
-	  // clearDirList();
-	  // readKaraDirectory();
+      hasCtlrFBeenPress = false;
 	}
     }
-  // if (hasBeenPress && toFind != "")
-  //   {
-  //     QList<QListWidgetItem *> iList; 
-  //     int	i = 0;
-  //     int	end;
- 
-  //     toFind += e->text();
-  //     iList = _FilesList.findItems(toFind, Qt::MatchContains);
-  //     clearDirList();
-  //     end = iList.size();
-  //     std::cout << e->text().toLocal8Bit().constData() << std::endl;
-  //     std::cout << end << std::endl;
-  //     std::cout << toFind.toLocal8Bit().constData() << std::endl;
-  //     while (i < end)
-  // 	{
-  // 	  _FilesList.addItem(iList[i]->text());
-  // 	  ++i;
-  // 	}
-  //   }
-  // else if(hasBeenPress && isAlphaNum(e->text()[0]) )
-  //   {
-  //     std::cout << "add " << e->text().toLocal8Bit().constData()[0] << std::endl;
-  //     toFind += e->text();
-  //   }
+  if ( (e->key() == Qt::Key_G) && QApplication::keyboardModifiers() && Qt::ControlModifier)
+    {
+      if (!hasCtlrGBeenPress)
+	{
+	  _find2.show();
+	  _find2.setFocus();
+	  _ctrlg = -1;
+      hasCtlrGBeenPress = true;
+	}
+      else
+	{
+	  _find2.hide();
+      hasCtlrGBeenPress = false;
+	}
+    }
+ if (e->key() == Qt::Key_Down ) {
+_ctrlg++;
+MainWindow::ctrlgedited();
+}
+if (e->key() == Qt::Key_Up && _ctrlg > 0) {
+_ctrlg--;
+MainWindow::ctrlgedited();
+}
 }
 
 void  MainWindow::changePlayer(int i)
@@ -262,7 +268,7 @@ void MainWindow::start(void)
         {
           endlist += " ";
           endlist += "\"";
-          endlist += _eyecatchDirectory;
+          endlist += _eyecatchDirectory.replace('/', SLASH);
           endlist += SLASH;
           endlist += _eyecatchList[rand() % len];
           endlist += "\"";
@@ -339,6 +345,34 @@ void MainWindow::changePlayerLocation(void)
       //toWinPath(path);
       _player = path;
     }
+}
+
+void MainWindow::ctrlfedited(void)
+{
+std::cout << _find.text().toUtf8().constData() << std::endl;
+//QStringList sl = _find.text().split(" ");
+QList<QListWidgetItem *> iList = _FilesList.findItems(_find.text(), Qt::MatchContains);;
+int i;
+  for (i = 0; i < _FilesList.count(); i++)
+    {
+	_FilesList.item(i)->setHidden(true);
+    }
+for (i = 0; i < iList.size(); i++)
+    {
+	iList[i]->setHidden(false);
+    }
+}
+
+
+void MainWindow::ctrlgedited(void)
+{
+std::cout << _find2.text().toUtf8().constData() << std::endl;
+QList<QListWidgetItem *> iList = _FilesList.findItems(_find2.text(), Qt::MatchContains);
+if (iList.size() > 0) {
+if (_ctrlg < 0) _ctrlg = 0;
+if (_ctrlg >= iList.size()) _ctrlg = iList.size()-1;
+    _FilesList.setCurrentItem(iList[_ctrlg]);
+}
 }
 
 void MainWindow::selectVLC(void)
