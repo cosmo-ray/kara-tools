@@ -14,6 +14,7 @@
 #include <QFileDialog>
 #include <QMenu>
 #include <QLineEdit>
+#include <QSplitter>
 
 #include "core.hh"
 
@@ -28,10 +29,6 @@ private:
 
   QVBoxLayout _vbox;
   QMenuBar    _menuBar;
-  QMenu	      _PlayerMenu;
-  QAction     *_changePlayerLocation;
-  QAction     *_selectMplayer;
-  QAction     *_selectVLC;
   QHBoxLayout _hboxLists;
   QListWidget _FilesList;
   QListWidget _karaList;
@@ -55,8 +52,13 @@ private:
   bool	      _double;
   bool	      _bEye;
   bool	      _eEye;
-int _ctrlg;
-bool _ctrlgcheck;
+  int	      _ctrlg;
+  bool	      _ctrlgcheck;
+  QSplitter   _splitter;
+  QMenu	      _PlayerMenu;
+  QAction     *_changePlayerLocation;
+  QAction     *_selectMplayer;
+  QAction     *_selectVLC;
 
   MainWindow(const MainWindow &);
   const MainWindow &operator=(const MainWindow &);

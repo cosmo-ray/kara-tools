@@ -9,13 +9,21 @@
 
 #include	"MainWindow.hh"
 
-MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shuffle"),
-			   _pick("pick"), _clearPlaylist("clear"), _PlayerMenu("Player options"),
+MainWindow::MainWindow() : _vbox(this),
+			   _start("start"),
+			   _shufle("shuffle"),
+			   _pick("pick"),
+			   _clearPlaylist("clear"),
 			   _changeDirectory("change directory"),
 			   _noDouble("no double"),
-			   _double(true), _beginEyecatch("begin eyecatch"), _bEye(false),
-			   _endEyecatch("end eyecatch"), _eEye(false),
-			   _karaDirectory("karaoke"), _eyecatchDirectory("eyecatch")
+			   _double(true),
+			   _beginEyecatch("begin eyecatch"),
+			   _bEye(false),
+			   _endEyecatch("end eyecatch"),
+			   _eEye(false),
+			   _karaDirectory("karaoke"),
+			   _eyecatchDirectory("eyecatch"),
+			   _PlayerMenu("Player options")
 {
   QDesktopWidget *desktop = QApplication::desktop();
 
@@ -51,8 +59,9 @@ MainWindow::MainWindow() : _vbox(this), _start("start"), _shufle("shuffle"),
   _vbox.addLayout(&_hbox2ndOptions);
   _vbox.addLayout(&_hboxLists);
   _vbox.addWidget(&_find);
+  _vbox.addWidget(&_splitter);
   _find.hide();
- _vbox.addWidget(&_find2);
+  _vbox.addWidget(&_find2);
   _find2.hide();
   connector();
   readKaraDirectory();
