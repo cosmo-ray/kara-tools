@@ -15,15 +15,11 @@ MainWindow::MainWindow() : _vbox(this),
 			   _pick("pick"),
 			   _clearPlaylist("clear"),
 			   _changeDirectory("change directory"),
-			   _noDouble("no double"),
-			   _double(true),
-			   _beginEyecatch("begin eyecatch"),
-			   _bEye(false),
-			   _endEyecatch("end eyecatch"),
-			   _eEye(false),
 			   _karaDirectory("karaoke"),
 			   _eyecatchDirectory("eyecatch"),
-			   _PlayerMenu("Player options")
+			   _PlayerMenu("Player options"),
+			   _eyecatchMenu("eyecatch options"),
+			   _playMenu("play options")
 {
   QDesktopWidget *desktop = QApplication::desktop();
 
@@ -33,33 +29,44 @@ MainWindow::MainWindow() : _vbox(this),
   setWindowTitle("Asamiya Saki will rape all your familly");
   setWindowIcon(QIcon("resources/sukeban_deka_icone.jpg"));
   setWindowFlags(Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
-  _hboxLists.addWidget(&_FilesList);
-  _hboxLists.addWidget(&_karaList);
+ 
+  _splitter.addWidget(&_FilesList);
+  _splitter.addWidget(&_karaList);
 
   _hbox2ndOptions.addWidget(&_changeDirectory);
   _hbox2ndOptions.addWidget(&_clearPlaylist);
+  _hbox2ndOptions.addWidget(&_start);
 
-  _hboxOptions.addWidget(&_start);
+  _menuBar.addMenu(&_PlayerMenu);
+  _menuBar.addMenu(&_eyecatchMenu);
+  _menuBar.addMenu(&_playMenu);
+
+  _hboxOptions.addWidget(&_menuBar);
   _hboxOptions.addWidget(&_shufle);
   _hboxOptions.addWidget(&_pick);
-  _hboxOptions.addWidget(&_noDouble);
-  _hboxOptions.addWidget(&_beginEyecatch);
-  _hboxOptions.addWidget(&_endEyecatch);
   
   _changePlayerLocation = _PlayerMenu.addAction("select player location");
   _selectMplayer = _PlayerMenu.addAction("select Mplayer as Player");
   _selectVLC = _PlayerMenu.addAction("select VLC as Player");
+  _selectMplayer->setCheckable(true);
+  _selectMplayer->setChecked(true);
+  _selectVLC->setCheckable(true);
 
-//  _ctrlfedited = _PlayerMenu.addAction("ctrlfedited");
+  _beginEyecatch = _eyecatchMenu.addAction("begin eyecatch");
+  _beginEyecatch->setCheckable(true);
+  _beginEyecatch->setChecked(true);
+  _endEyecatch = _eyecatchMenu.addAction("end eyecatch");
+  _endEyecatch->setCheckable(true);
+  _endEyecatch->setChecked(true);
 
-  _menuBar.addMenu(&_PlayerMenu);
-
-  _vbox.addWidget(&_menuBar);
+  _noDouble = _playMenu.addAction("no double ?");
+  _noDouble->setCheckable(true);
+  _noDouble->setChecked(true);
+    
   _vbox.addLayout(&_hboxOptions);
   _vbox.addLayout(&_hbox2ndOptions);
-  _vbox.addLayout(&_hboxLists);
-  _vbox.addWidget(&_find);
   _vbox.addWidget(&_splitter);
+  _vbox.addWidget(&_find);
   _find.hide();
   _vbox.addWidget(&_find2);
   _find2.hide();
@@ -90,6 +97,10 @@ void	MainWindow::connector(void)
   connect(_selectMplayer, SIGNAL(triggered()), this, SLOT(selectMplayer(void)));
   connect(_selectVLC, SIGNAL(triggered()), this, SLOT(selectVLC(void)));
 
+  connect(_beginEyecatch, SIGNAL(triggered()), this, SLOT(beginEyecatch(void)));
+  connect(_endEyecatch, SIGNAL(triggered()), this, SLOT(endEyecatch(void)));
+  connect(_noDouble, SIGNAL(triggered()), this, SLOT(noDouble(void)));
+
   /*button*/
   connect(&_start, SIGNAL(clicked(bool)), this, SLOT(start(void)));
   connect(&_shufle, SIGNAL(clicked(bool)), this, SLOT(shufle(void)));
@@ -98,9 +109,6 @@ void	MainWindow::connector(void)
   connect(&_changeDirectory, SIGNAL(clicked(bool)), this, SLOT(changeDirectory(void)));
 
   /*check box*/
-  connect(&_noDouble, SIGNAL(stateChanged(int)), this, SLOT(noDouble(void)));
-  connect(&_beginEyecatch, SIGNAL(stateChanged(int)), this, SLOT(beginEyecatch(void)));
-  connect(&_endEyecatch, SIGNAL(stateChanged(int)), this, SLOT(endEyecatch(void)));
 
   /* mine */
 connect(&_find, SIGNAL(textEdited(QString)), this, SLOT(ctrlfedited(void)));
@@ -166,7 +174,7 @@ void	MainWindow::readEyecatchDirectory()
 
 void	MainWindow::addToPlaylist(QListWidgetItem *item)
 {
-  if (_double)
+  if (!_noDouble->isChecked())
     _karaList.addItem(item->text());
   else
     {
@@ -260,10 +268,10 @@ void MainWindow::start(void)
   if (forkRet)
     return;
 #endif
-  if (_bEye | _eEye)
+  if (_beginEyecatch->isChecked() | _endEyecatch->isChecked())
     {
       int	len = _eyecatchList.size();
-      if (_bEye && len)
+      if (_beginEyecatch->isChecked() && len)
         {
 	  listsKara += " ";
 	  listsKara += "\"";
@@ -273,7 +281,7 @@ void MainWindow::start(void)
           listsKara += "\"";
           listsKara += _playerOpt;
         }
-         if (_eEye && len)
+         if (_endEyecatch->isChecked() && len)
         {
           endlist += " ";
           endlist += "\"";
@@ -386,27 +394,29 @@ if (_ctrlg >= iList.size()) _ctrlg = iList.size()-1;
 
 void MainWindow::selectVLC(void)
 {
+  _selectMplayer->setChecked(false);
+  _selectVLC->setChecked(true);
   changePlayer(VLC);
 }
 
 void MainWindow::selectMplayer(void)
 {
+  _selectMplayer->setChecked(true);
+  _selectVLC->setChecked(false);
   changePlayer(MPLAYER);
 }
 
- void MainWindow::noDouble(void)
- {
-   _double = !_double;
- }
+void MainWindow::noDouble(void)
+{
+  // _double = !_double;
+}
 
 void MainWindow::beginEyecatch(void)
 {
-  _bEye = !_bEye;  
 }
 
 void MainWindow::endEyecatch(void)
 {
-  _eEye = !_eEye;  
 }
 
 /*------------------- !Slots methodes -------------------*/

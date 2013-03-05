@@ -28,8 +28,8 @@ public:
 private:
 
   QVBoxLayout _vbox;
+  QSplitter   _splitter;
   QMenuBar    _menuBar;
-  QHBoxLayout _hboxLists;
   QListWidget _FilesList;
   QListWidget _karaList;
   QHBoxLayout _hboxOptions;
@@ -39,9 +39,6 @@ private:
   QPushButton _pick;
   QPushButton _clearPlaylist;
   QPushButton _changeDirectory;
-  QCheckBox   _noDouble;
-  QCheckBox   _beginEyecatch;
-  QCheckBox   _endEyecatch;
   QLineEdit   _find;
   QLineEdit   _find2;
   QString     _player;
@@ -49,16 +46,17 @@ private:
   QString     _eyecatchDirectory;
   QString     _playerOpt;
   QStringList _eyecatchList;
-  bool	      _double;
-  bool	      _bEye;
-  bool	      _eEye;
   int	      _ctrlg;
   bool	      _ctrlgcheck;
-  QSplitter   _splitter;
   QMenu	      _PlayerMenu;
+  QMenu	      _eyecatchMenu;
+  QMenu	      _playMenu;
   QAction     *_changePlayerLocation;
   QAction     *_selectMplayer;
   QAction     *_selectVLC;
+  QAction     *_beginEyecatch;
+  QAction     *_endEyecatch;
+  QAction     *_noDouble;
 
   MainWindow(const MainWindow &);
   const MainWindow &operator=(const MainWindow &);
