@@ -3,10 +3,14 @@
 #include	<QStringList>
 #include	<stdlib.h>
 #include	<unistd.h>
+
+extern "C" {
+#include	<libavformat/avformat.h>
+}
+
 #ifdef	WIN32
 #include	<windows.h>
 #endif
-
 #include	"MainWindow.hh"
 
 MainWindow::MainWindow() : _vbox(this),
@@ -127,6 +131,7 @@ void	MainWindow::readKaraDirectory()
 
   QStringList  filesName = dir.entryList();
   QStringList::const_iterator constIterator;
+  av_register_all();
 
   for (constIterator = filesName.constBegin(); constIterator != filesName.constEnd();
        ++constIterator)
@@ -135,10 +140,19 @@ void	MainWindow::readKaraDirectory()
 	  || (*constIterator).contains(".mkv")
 	  || (*constIterator).contains(".flv")
 	  || (*constIterator).contains(".mp4")
-      || (*constIterator).contains(".mp3")
-      || (*constIterator).contains(".ogv")
+	  || (*constIterator).contains(".ogv")
 	)
-      _FilesList.addItem(*constIterator);
+	{
+	  _FilesList.addItem(*constIterator);
+	  /*TODO: put this in thread, because it's very long.......*/
+	  AVFormatContext* pFormatCtx = avformat_alloc_context();
+	  if (!avformat_open_input(&pFormatCtx, (_karaDirectory.replace('/', SLASH) + QString(SLASH) + (*constIterator)).toLocal8Bit().constData(), NULL, NULL))
+	    {
+	      avformat_find_stream_info(pFormatCtx, NULL);
+	      int64_t duration = pFormatCtx->duration / AV_TIME_BASE;
+	    }
+	  avformat_free_context(pFormatCtx);
+	}
     }
 }
 
