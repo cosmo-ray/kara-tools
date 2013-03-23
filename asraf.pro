@@ -18,6 +18,7 @@ LIBS +=  -L/usr/lib -lavdevice -lavformat -lavcodec -lavutil -lswscale -lbz2
 
 SOURCES += main.cpp\
         mainwindow.cpp\
+        Media.cpp\
         core.cpp
 
 HEADERS  += mainwindow.hh \

@@ -129,6 +129,8 @@ void	MainWindow::readKaraDirectory()
       return ;
     }
 
+  std::cout << (dir.path() + SLASH).toLocal8Bit().constData() << std::endl;
+
   QStringList  filesName = dir.entryList();
   QStringList::const_iterator constIterator;
   av_register_all();
@@ -143,15 +145,18 @@ void	MainWindow::readKaraDirectory()
 	  || (*constIterator).contains(".ogv")
 	)
 	{
-	  _FilesList.addItem(*constIterator);
 	  /*TODO: put this in thread, because it's very long.......*/
 	  AVFormatContext* pFormatCtx = avformat_alloc_context();
 	  if (!avformat_open_input(&pFormatCtx, (_karaDirectory.replace('/', SLASH) + QString(SLASH) + (*constIterator)).toLocal8Bit().constData(), NULL, NULL))
 	    {
 	      avformat_find_stream_info(pFormatCtx, NULL);
 	      int64_t duration = pFormatCtx->duration / AV_TIME_BASE;
+	      std::cout << duration << std::endl;
+	      (void)duration;
 	    }
 	  avformat_free_context(pFormatCtx);
+	  QListWidgetItem* item = new Media((dir.path() + SLASH), *constIterator);
+	  _FilesList.addItem(item);
 	}
     }
 }
@@ -188,12 +193,15 @@ void	MainWindow::readEyecatchDirectory()
 
 void	MainWindow::addToPlaylist(QListWidgetItem *item)
 {
+  QListWidgetItem* newItem = new Media(static_cast<Media*>(item)->getPath());
   if (!_noDouble->isChecked())
-    _karaList.addItem(item->text());
+    _karaList.addItem(newItem);
   else
     {
       if (_karaList.findItems(item->text(), Qt::MatchCaseSensitive).empty())
-	_karaList.addItem(item->text());
+	_karaList.addItem(newItem);
+      else
+	delete newItem;
     }
 }
 
@@ -202,7 +210,7 @@ void	MainWindow::addToPlaylist(QListWidgetItem *item)
 
 void	MainWindow::rmItemFromKaraList(QListWidgetItem *)
 {
-  _karaList.takeItem(_karaList.currentRow());
+  delete _karaList.takeItem(_karaList.currentRow());
 }
 
 
@@ -311,11 +319,16 @@ void MainWindow::start(void)
     {
       listsKara += " ";
       listsKara += "\"";
-      listsKara += _karaDirectory.replace('/', SLASH);
-      listsKara += SLASH;
-      listsKara += _karaList.item(i)->text();
+      // listsKara += _karaDirectory.replace('/', SLASH);
+      // listsKara += SLASH;
+      // listsKara += _karaList.item(i)->text();
+      std::cout << "tata" << std::endl;
+      printf("%p\n", _karaList.item(i));
+      listsKara += static_cast<Media*>(_karaList.item(i))->getPath();
+
       listsKara += "\"";
       listsKara += _playerOpt; //" -fs -ass";
+      std::cout << listsKara.toLocal8Bit().constData() << std::endl;
       ++i;
     }
   listsKara += endlist;

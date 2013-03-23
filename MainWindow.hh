@@ -17,6 +17,7 @@
 #include <QSplitter>
 
 #include "core.hh"
+#include "Media.hh"
 
 class	MainWindow : public QWidget
 {

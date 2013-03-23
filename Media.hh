@@ -1,6 +1,8 @@
+#include <QListWidget>
+#include <QListWidgetItem>
 #include <QString>
 
-class	Media
+class	Media : public QListWidgetItem
 {
 public:
   Media(const QString &dirPath, const QString &name);
