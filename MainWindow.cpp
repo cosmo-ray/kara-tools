@@ -451,5 +451,11 @@ void MainWindow::endEyecatch(void)
 
 void MainWindow::clearDirList(void)
 {
-  while(_FilesList.takeItem(0)); //should realy be optimise  
+  for(;;)
+    {
+      QListWidgetItem* item = _FilesList.takeItem(0);
+      if (item == NULL)
+	return;
+      delete item;
+    }
 }
