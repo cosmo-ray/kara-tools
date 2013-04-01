@@ -3,7 +3,7 @@
 #include	"Media.hh"
 
 Media::Media(const QString &dirPath, const QString &name)
-  : QListWidgetItem(name), _path(dirPath + name)
+  : QListWidgetItem(QFileInfo(name).baseName()), _path(dirPath + name)
 {
   std::cout << _path.toLocal8Bit().constData() << std::endl;
 }
@@ -15,7 +15,5 @@ Media::Media(const QString &path)
 
 const QString &Media::getPath()
 {
-  std::cout << "titi" << std::endl;
-  std::cout << _path.toLocal8Bit().constData() << std::endl;
   return (_path);
 }

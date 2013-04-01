@@ -198,6 +198,9 @@ void	MainWindow::addToPlaylist(QListWidgetItem *item)
     _karaList.addItem(newItem);
   else
     {
+      // std::cout << item->text().toLocal8Bit().constData() << std::endl;
+      // if (_karaList.count())
+      // 	std::cout << _karaList.item(0)->text().toLocal8Bit().constData() << std::endl;
       if (_karaList.findItems(item->text(), Qt::MatchCaseSensitive).empty())
 	_karaList.addItem(newItem);
       else
