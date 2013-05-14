@@ -34,6 +34,10 @@ MainWindow::MainWindow() : _vbox(this),
   setWindowIcon(QIcon("resources/sukeban_deka_icone.jpg"));
   setWindowFlags(Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
  
+  _FilesList.setColumnCount(3);
+  QStringList ColumnNames;
+  ColumnNames << "karaoke name" << "lenght" << "saki";
+  _FilesList.setHeaderLabels(ColumnNames);
   _splitter.addWidget(&_FilesList);
   _splitter.addWidget(&_karaList);
 
@@ -87,9 +91,9 @@ MainWindow::~MainWindow()
 void	MainWindow::connector(void)
 {
   connect(&_FilesList,
-	  SIGNAL(itemActivated(QListWidgetItem *)),
+	  SIGNAL(itemActivated(QTreeWidgetItem *, int)),
 	  this,
-	  SLOT(addToPlaylist(QListWidgetItem *)));
+	  SLOT(addToPlaylist(QTreeWidgetItem *)));
 
   connect(&_karaList,
 	  SIGNAL(itemActivated(QListWidgetItem *)),
@@ -147,16 +151,21 @@ void	MainWindow::readKaraDirectory()
 	{
 	  /*TODO: put this in thread, because it's very long.......*/
 	  AVFormatContext* pFormatCtx = avformat_alloc_context();
+	  int64_t duration = -1;
 	  if (!avformat_open_input(&pFormatCtx, (_karaDirectory.replace('/', SLASH) + QString(SLASH) + (*constIterator)).toLocal8Bit().constData(), NULL, NULL))
 	    {
 	      avformat_find_stream_info(pFormatCtx, NULL);
-	      int64_t duration = pFormatCtx->duration / AV_TIME_BASE;
+	      duration = pFormatCtx->duration / AV_TIME_BASE;
 	      std::cout << duration << std::endl;
 	      (void)duration;
 	    }
 	  avformat_free_context(pFormatCtx);
-	  QListWidgetItem* item = new Media((dir.path() + SLASH), *constIterator);
-	  _FilesList.addItem(item);
+	  // QListWidgetItem* item = new Media((dir.path() + SLASH), *constIterator);
+	  // _FilesList.addItem(item);
+	  QTreeWidgetItem* nitem = new Media((dir.path() + SLASH), *constIterator);
+	  nitem->setText(0, ((Media *)nitem)->getName());
+	  nitem->setText(1, durationToString(duration));
+	  _FilesList.addTopLevelItem(nitem);
 	}
     }
 }
@@ -191,7 +200,7 @@ void	MainWindow::readEyecatchDirectory()
 
 /*Files list slots*/
 
-void	MainWindow::addToPlaylist(QListWidgetItem *item)
+void	MainWindow::addToPlaylist(QTreeWidgetItem *item)
 {
   QListWidgetItem* newItem = new Media(static_cast<Media*>(item)->getPath());
   if (!_noDouble->isChecked())
@@ -201,7 +210,7 @@ void	MainWindow::addToPlaylist(QListWidgetItem *item)
       // std::cout << item->text().toLocal8Bit().constData() << std::endl;
       // if (_karaList.count())
       // 	std::cout << _karaList.item(0)->text().toLocal8Bit().constData() << std::endl;
-      if (_karaList.findItems(item->text(), Qt::MatchCaseSensitive).empty())
+      if (_karaList.findItems(static_cast<Media*>(item)->getName(), Qt::MatchCaseSensitive).empty())
 	_karaList.addItem(newItem);
       else
 	delete newItem;
@@ -358,10 +367,10 @@ void MainWindow::shufle(void)
 
 void MainWindow::pick(void)
 {
-  int	len = _FilesList.count();
+  int	len = _FilesList.topLevelItemCount();
   if (!len)
     return;
-  addToPlaylist(_FilesList.item(rand() % len));
+  addToPlaylist(static_cast<Media *>(_FilesList.topLevelItem(rand() % len)));
 
 }
 
@@ -398,11 +407,11 @@ void MainWindow::ctrlfedited(void)
 {
 std::cout << _find.text().toUtf8().constData() << std::endl;
 //QStringList sl = _find.text().split(" ");
-QList<QListWidgetItem *> iList = _FilesList.findItems(_find.text(), Qt::MatchContains);;
+QList<QTreeWidgetItem *> iList = _FilesList.findItems(_find.text(), Qt::MatchContains);;
 int i;
-  for (i = 0; i < _FilesList.count(); i++)
+ for (i = 0; i < _FilesList.topLevelItemCount(); i++)
     {
-	_FilesList.item(i)->setHidden(true);
+	_FilesList.topLevelItem(i)->setHidden(true);
     }
 for (i = 0; i < iList.size(); i++)
     {
@@ -414,7 +423,7 @@ for (i = 0; i < iList.size(); i++)
 void MainWindow::ctrlgedited(void)
 {
 std::cout << _find2.text().toUtf8().constData() << std::endl;
-QList<QListWidgetItem *> iList = _FilesList.findItems(_find2.text(), Qt::MatchContains);
+QList<QTreeWidgetItem *> iList = _FilesList.findItems(_find2.text(), Qt::MatchContains);
 if (iList.size() > 0) {
 if (_ctrlg < 0) _ctrlg = 0;
 if (_ctrlg >= iList.size()) _ctrlg = iList.size()-1;
@@ -456,7 +465,7 @@ void MainWindow::clearDirList(void)
 {
   for(;;)
     {
-      QListWidgetItem* item = _FilesList.takeItem(0);
+      QTreeWidgetItem* item = _FilesList.takeTopLevelItem(0);
       if (item == NULL)
 	return;
       delete item;

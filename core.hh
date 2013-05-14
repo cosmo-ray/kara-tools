@@ -23,6 +23,8 @@ QString  getPlayerCmd<VLC>();
 
 void	 initRand();
 
+const	QString durationToString(int64_t duration);
+
 void    toWinPath(QString &path);
 
 void	execPlaylist(const QString &player, const QString &listKara);

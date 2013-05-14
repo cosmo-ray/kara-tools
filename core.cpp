@@ -37,6 +37,16 @@ void	initRand()
 #endif
 }
  
+const	QString durationToString(int64_t duration)
+{
+  QString ret;
+
+  ret.append(QString("%1").arg((int)(duration / 60)));
+  ret += "m";
+  ret.append(QString("%1").arg((int)(duration % 60)));
+  return (ret);
+}
+
 void    toWinPath(QString &path)
 {
 #ifdef	Q_OS_WIN32

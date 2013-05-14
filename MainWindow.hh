@@ -7,6 +7,7 @@
 #include <QMenuBar>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include <QTreeWidgetItem>
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QCheckBox>
@@ -15,7 +16,7 @@
 #include <QMenu>
 #include <QLineEdit>
 #include <QSplitter>
-
+#include <QTreeWidget>
 #include "core.hh"
 #include "Media.hh"
 
@@ -31,8 +32,9 @@ private:
   QVBoxLayout _vbox;
   QSplitter   _splitter;
   QMenuBar    _menuBar;
-  QListWidget _FilesList;
+  //QListWidget _FilesList;
   QListWidget _karaList;
+  QTreeWidget _FilesList;
   QHBoxLayout _hboxOptions;
   QHBoxLayout _hbox2ndOptions;
   QPushButton _start;
@@ -72,7 +74,7 @@ private:
 
 private slots:
   /*Files list slots*/
-  void addToPlaylist(QListWidgetItem *);
+  void addToPlaylist(QTreeWidgetItem *);
   
   /*Kara list slots*/
   void rmItemFromKaraList(QListWidgetItem *);

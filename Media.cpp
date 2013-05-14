@@ -17,3 +17,8 @@ const QString &Media::getPath()
 {
   return (_path);
 }
+
+const QString Media::getName()
+{
+  return (static_cast<QListWidgetItem *>(this)->text());
+}
