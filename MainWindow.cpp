@@ -156,6 +156,7 @@ void	MainWindow::readKaraDirectory()
 	    {
 	      avformat_find_stream_info(pFormatCtx, NULL);
 	      duration = pFormatCtx->duration / AV_TIME_BASE;
+	      //framerate = pFormatCtx->streams[0]->r_frame_rate.num; 
 	    }
 	  avformat_free_context(pFormatCtx);
 	  // QListWidgetItem* item = new Media((dir.path() + SLASH), *constIterator);
