@@ -6,10 +6,11 @@ ScriptType: v4.00+
 WrapStyle: 0
 ScaledBorderAndShadow: yes
 Collisions: Normal
-Scroll Position: 0
-Active Line: 13
+Scroll Position: 1
+Active Line: 7
 Video Zoom Percent: 1
 Last Style Storage: Default
+Audio URI: Sukeban Deka II ed 3.avi
 YCbCr Matrix: None
 
 [V4+ Styles]
@@ -18,18 +19,18 @@ Style: Default,Arial,20,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 0,0:00:13.66,0:00:16.26,Default,,0,0,0,,{\k32}{\k27}chi{\k63}i{\k20}sa {\k47}na{\k19}mi{\k20}da {\k32}no
+Dialogue: 0,0:00:13.66,0:00:16.26,Default,,0,0,0,,{\k32}{\k27}chi{\k63}i{\k22}sa{\k20}na {\k25}na{\k19}mi{\k20}da {\k32}no
 Dialogue: 0,0:00:17.14,0:00:19.82,Default,,0,0,0,,{\k34}{\k26}u{\k61}mi {\k21}wo {\k20}fu{\k30}ne {\k20}ga {\k28}yu{\k28}ku
 Dialogue: 0,0:00:20.60,0:00:23.44,Default,,0,0,0,,{\k49}{\k16}ka{\k55}na{\k37}shi{\k22}mi {\k17}no {\k21}ka{\k31}ze {\k36}ga
 Dialogue: 0,0:00:24.40,0:00:26.98,Default,,0,0,0,,{\k33}{\k54}ho {\k36}wo {\k26}ha{\k49}ko{\k60}bu
 Dialogue: 0,0:00:27.30,0:00:31.84,Default,,0,0,0,,{\k58}{\k25}na{\k25}ka{\k15}na{\k22}i{\k37}de {\k58}a{\k44}o{\k39}i {\k22}ko{\k21}to{\k22}ri{\k26}ta{\k39}chi
 Dialogue: 0,0:00:31.56,0:00:34.96,Default,,0,0,0,,{\k38}{\k14}tsu{\k21}ba{\k51}sa {\k48}i{\k31}ta{\k43}mu {\k47}ho{\k47}do
 Dialogue: 0,0:00:35.52,0:00:40.84,Default,,0,0,0,,{\k42}{\k30}a{\k42}shi{\k45}ta {\k76}ni {\k46}yu{\k19}ke{\k23}ru {\k24}ka{\k185}ra
-Dialogue: 0,0:00:43.18,0:00:48.18,Default,,0,0,0,,{\k31}{\k30}i{\k53}tsu {\k135}ka {\k43}ha{\k65}ha {\k21}no {\k20}yo{\k43}u {\k59}ni
+Dialogue: 0,0:00:43.18,0:00:48.18,Default,,0,0,0,,{\k31}{\k30}i{\k53}tsu{\k135}ka {\k43}ha{\k65}ha {\k21}no {\k20}yo{\k43}u {\k59}ni
 Dialogue: 0,0:00:48.56,0:00:55.20,Default,,0,0,0,,{\k20}{\k24}i{\k47}no{\k95}chi {\k55}a{\k165}ru {\k46}mo{\k70}no {\k22}wa {\k40}su{\k40}be{\k40}te
 Dialogue: 0,0:00:55.50,0:01:02.26,Default,,0,0,0,,{\k33}{\k38}nu{\k38}ku{\k71}mo{\k23}ri {\k40}no {\k34}ryo{\k97}u{\k98}te {\k37}sa{\k47}shi{\k28}no{\k34}be{\k58}te
 Dialogue: 0,0:01:02.52,0:01:07.72,Default,,0,0,0,,{\k31}{\k53}da{\k22}ki{\k83}shi{\k24}me{\k43}ru {\k45}hi{\k27}to {\k58}ni {\k23}na{\k34}ru {\k77}wa
-Dialogue: 0,0:01:09.66,0:01:16.62,Default,,0,0,0,,{\k43}{\k27}ka{\k50}gi{\k66}ri{\k26}na{\k33}ku {\k38}hi{\k96}ro{\k89}i {\k31}ya{\k55}sa{\k24}shi{\k47}sa {\k71}de
+Dialogue: 0,0:01:09.66,0:01:16.62,Default,,0,0,0,,{\k32}{\k38}ka{\k50}gi{\k66}ri{\k26}na{\k33}ku {\k38}hi{\k96}ro{\k89}i {\k52}ya{\k34}sa{\k24}shi{\k47}sa {\k71}de
 Dialogue: 0,0:01:16.90,0:01:21.62,Default,,0,0,0,,{\k16}{\k40}yu{\k40}ru{\k69}shi{\k31}a{\k39}u {\k32}hi{\k47}to {\k44}ni {\k30}na{\k46}ru {\k39}wa
 Dialogue: 0,0:01:28.06,0:01:30.66,Default,,0,0,0,,{\k29}{\k14}ka{\k73}ki{\k15}ka{\k26}ke{\k27}no {\k18}te{\k24}ga{\k34}mi
 Dialogue: 0,0:01:31.44,0:01:34.28,Default,,0,0,0,,{\k43}{\k22}MO{\k44}SA{\k50}IC {\k28} mo{\k21}yo{\k34}u{\k42} ni

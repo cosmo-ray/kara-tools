@@ -38,6 +38,7 @@ MainWindow::MainWindow() : _vbox(this),
   QStringList ColumnNames;
   ColumnNames << "karaoke name" << "lenght" << "saki";
   _FilesList.setHeaderLabels(ColumnNames);
+  _FilesList.setColumnWidth( 0, 500 );
   _splitter.addWidget(&_FilesList);
   _splitter.addWidget(&_karaList);
 
@@ -133,7 +134,7 @@ void	MainWindow::readKaraDirectory()
       return ;
     }
 
-  std::cout << (dir.path() + SLASH).toLocal8Bit().constData() << std::endl;
+  // std::cout << (dir.path() + SLASH).toLocal8Bit().constData() << std::endl;
 
   QStringList  filesName = dir.entryList();
   QStringList::const_iterator constIterator;
@@ -156,8 +157,8 @@ void	MainWindow::readKaraDirectory()
 	    {
 	      avformat_find_stream_info(pFormatCtx, NULL);
 	      duration = pFormatCtx->duration / AV_TIME_BASE;
-	      std::cout << pFormatCtx->streams[0]->r_frame_rate.num << std::endl;
-              std::cout << pFormatCtx->streams[0]->r_frame_rate.den << std::endl;
+	      // std::cout << pFormatCtx->streams[0]->r_frame_rate.num << std::endl;
+              // std::cout << pFormatCtx->streams[0]->r_frame_rate.den << std::endl;
 	    }
 	  avformat_free_context(pFormatCtx);
 	  // QListWidgetItem* item = new Media((dir.path() + SLASH), *constIterator);
@@ -334,13 +335,13 @@ void MainWindow::start(void)
       // listsKara += _karaDirectory.replace('/', SLASH);
       // listsKara += SLASH;
       // listsKara += _karaList.item(i)->text();
-      std::cout << "tata" << std::endl;
-      printf("%p\n", _karaList.item(i));
+      // std::cout << "tata" << std::endl;
+      // printf("%p\n", _karaList.item(i));
       listsKara += static_cast<Media*>(_karaList.item(i))->getPath();
 
       listsKara += "\"";
       listsKara += _playerOpt; //" -fs -ass";
-      std::cout << listsKara.toLocal8Bit().constData() << std::endl;
+      // std::cout << listsKara.toLocal8Bit().constData() << std::endl;
       ++i;
     }
   listsKara += endlist;
@@ -405,7 +406,7 @@ void MainWindow::changePlayerLocation(void)
 
 void MainWindow::ctrlfedited(void)
 {
-std::cout << _find.text().toUtf8().constData() << std::endl;
+// std::cout << _find.text().toUtf8().constData() << std::endl;
 //QStringList sl = _find.text().split(" ");
 QList<QTreeWidgetItem *> iList = _FilesList.findItems(_find.text(), Qt::MatchContains);;
 int i;
@@ -422,7 +423,7 @@ for (i = 0; i < iList.size(); i++)
 
 void MainWindow::ctrlgedited(void)
 {
-std::cout << _find2.text().toUtf8().constData() << std::endl;
+// std::cout << _find2.text().toUtf8().constData() << std::endl;
 QList<QTreeWidgetItem *> iList = _FilesList.findItems(_find2.text(), Qt::MatchContains);
 if (iList.size() > 0) {
 if (_ctrlg < 0) _ctrlg = 0;
