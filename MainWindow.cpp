@@ -4,9 +4,15 @@
 #include	<stdlib.h>
 #include	<unistd.h>
 
-extern "C" {
+#include <phonon/AudioOutput>
+#include <phonon/MediaObject>
+#include <phonon/MediaSource>
+#include <phonon/VideoWidget>
+#include <phonon/VideoPlayer>
+
+/*extern "C" {
 #include	<libavformat/avformat.h>
-}
+}*/
 
 #ifdef	WIN32
 #include	<windows.h>
@@ -46,6 +52,8 @@ MainWindow::MainWindow() : _vbox(this),
   _hbox2ndOptions.addWidget(&_clearPlaylist);
   _hbox2ndOptions.addWidget(&_start);
 
+  _splitter.addWidget(&_video);
+
   _menuBar.addMenu(&_PlayerMenu);
   _menuBar.addMenu(&_eyecatchMenu);
   _menuBar.addMenu(&_playMenu);
@@ -53,6 +61,10 @@ MainWindow::MainWindow() : _vbox(this),
   _hboxOptions.addWidget(&_menuBar);
   _hboxOptions.addWidget(&_shufle);
   _hboxOptions.addWidget(&_pick);
+ _hboxOptions.addWidget(&_savePlaylistButton);
+ _hboxOptions.addWidget(&_loadPlaylistButton);
+_savePlaylistButton.setText("Save");
+_loadPlaylistButton.setText("Load");
   
   _changePlayerLocation = _PlayerMenu.addAction("select player location");
   _selectMplayer = _PlayerMenu.addAction("select Mplayer as Player");
@@ -82,6 +94,28 @@ MainWindow::MainWindow() : _vbox(this),
   connector();
   readKaraDirectory();
   readEyecatchDirectory();
+
+player =  new Phonon::VideoPlayer(Phonon::VideoCategory, &_video);
+player->show();
+    // player->play(QString(("/home/shun/asraf/karaoke/a.avi")));
+mo=player->mediaObject();
+//slider = new Phonon::SeekSlider;
+    // slider->setMediaObject(mo);
+
+    // slider->show();
+
+
+/*Phonon::MediaObject *music =
+     Phonon::createPlayer(Phonon::MusicCategory,
+                          Phonon::MediaSource("/home/shun/mysong.mp3"));
+ music->play();
+*/
+mp=new QProcess(0);
+//QStringList args;
+//QString program = "mplayer";
+//QString windowId=QString::number(_video.winId());
+//args << "-wid" << windowId << "-slave" << "-quiet" << "/home/shun/asraf/karaoke/a.avi";
+//mp->start(program,args);
 }
 
 MainWindow::~MainWindow()
@@ -117,13 +151,61 @@ void	MainWindow::connector(void)
   connect(&_clearPlaylist, SIGNAL(clicked(bool)), this, SLOT(clearPlaylist(void)));
   connect(&_changeDirectory, SIGNAL(clicked(bool)), this, SLOT(changeDirectory(void)));
 
+  connect(&_savePlaylistButton, SIGNAL(clicked(bool)), this, SLOT(savePlaylist(void)));
+ connect(&_loadPlaylistButton, SIGNAL(clicked(bool)), this, SLOT(loadPlaylist(void)));
+
   /*check box*/
 
   /* mine */
 connect(&_find, SIGNAL(textEdited(QString)), this, SLOT(ctrlfedited(void)));
 connect(&_find2, SIGNAL(textEdited(QString)), this, SLOT(ctrlgedited(void)));
+//connect(&_video, SIGNAL(clicked(bool)), this, SLOT(onacliquesurlavideo(void)));
 }
 
+void	MainWindow::loadPlaylist()
+{
+std::cout << "lol";
+std::cout.flush();
+QString filename = QFileDialog::getOpenFileName(this, tr("Open Playlist"),
+                            "/home/shun/",
+                            tr("Playlist (*.pls)"));
+QFile f(filename);
+f.open(QIODevice::ReadOnly | QIODevice::Text);
+QTextStream in(&f);
+QListWidgetItem* nitem;
+QString line;
+std::cout << filename.toUtf8().constData();
+// load data in f
+while (!in.atEnd()) {
+line = in.readLine();
+std::cout << line.toUtf8().constData() << std::endl;
+std::cout.flush();
+nitem = new Media(line);
+_karaList.addItem(nitem);
+//newItem = new Media(static_cast<Media*>(item)->getPath());
+//String line = in.readLine();
+}
+// end load
+f.close();
+}
+
+void	MainWindow::savePlaylist()
+{
+int i;
+QString filename = QFileDialog::getSaveFileName(this, tr("Save Playlist"),
+                            "/home/shun/lastplaylist.pls",
+                            tr("Playlist (*.pls)"));
+QFile f(filename);
+f.open(QIODevice::WriteOnly);
+QTextStream out(&f);
+// store data in f
+for(i=0;i<_karaList.count();i++) {
+//f.write(static_cast<Media*>(_karaList.item(i))->getPath().toUtf8().constData());
+out << static_cast<Media*>(_karaList.item(i))->getPath().toUtf8().constData() << "\n";
+}
+// end store
+f.close();
+}
 
 void	MainWindow::readKaraDirectory()
 {
@@ -138,7 +220,7 @@ void	MainWindow::readKaraDirectory()
 
   QStringList  filesName = dir.entryList();
   QStringList::const_iterator constIterator;
-  av_register_all();
+  //av_register_all();
 
   for (constIterator = filesName.constBegin(); constIterator != filesName.constEnd();
        ++constIterator)
@@ -151,21 +233,21 @@ void	MainWindow::readKaraDirectory()
 	)
 	{
 	  /*TODO: put this in thread, because it's very long.......*/
-	  AVFormatContext* pFormatCtx = avformat_alloc_context();
+	/*  AVFormatContext* pFormatCtx = avformat_alloc_context();
 	  int64_t duration = -1;
 	  if (!avformat_open_input(&pFormatCtx, (_karaDirectory.replace('/', SLASH) + QString(SLASH) + (*constIterator)).toLocal8Bit().constData(), NULL, NULL))
 	    {
-	      avformat_find_stream_info(pFormatCtx, NULL);
-	      duration = pFormatCtx->duration / AV_TIME_BASE;
+	//      avformat_find_stream_info(pFormatCtx, NULL);
+	//      duration = pFormatCtx->duration / AV_TIME_BASE;
 	      // std::cout << pFormatCtx->streams[0]->r_frame_rate.num << std::endl;
               // std::cout << pFormatCtx->streams[0]->r_frame_rate.den << std::endl;
 	    }
-	  avformat_free_context(pFormatCtx);
+	//  avformat_free_context(pFormatCtx);
 	  // QListWidgetItem* item = new Media((dir.path() + SLASH), *constIterator);
 	  // _FilesList.addItem(item);
-	  QTreeWidgetItem* nitem = new Media((dir.path() + SLASH), *constIterator);
+*/	  QTreeWidgetItem* nitem = new Media((dir.path() + SLASH), *constIterator);
 	  nitem->setText(0, ((Media *)nitem)->getName());
-	  nitem->setText(1, durationToString(duration));
+	//  nitem->setText(1, durationToString(duration));
 	  _FilesList.addTopLevelItem(nitem);
 	}
     }
@@ -364,6 +446,32 @@ void MainWindow::shufle(void)
       _karaList.insertItem(rand() % (len - 1), tmp);
       ++i;
     }
+}
+
+void MainWindow::mousePressEvent(QMouseEvent *e)
+{
+if(e->button() == Qt::LeftButton) {
+	std::cout << "clic" << mo->currentTime();
+std::cout.flush();
+mp->write("get_time_pos\n");
+setWindowTitle(mp->readAll());
+}
+if(e->button() == Qt::RightButton) {
+mo->seek(mo->currentTime()-1000);
+}
+}
+
+void MainWindow::mouseReleaseEvent(QMouseEvent *e)
+{
+if(e->button() == Qt::LeftButton) {
+	std::cout << "cloc" << mo->currentTime();
+std::cout.flush();
+mp->write("get_time_pos\n");
+setWindowTitle(mp->readAll());
+}
+if(e->button() == Qt::RightButton) {
+mo->seek(mo->currentTime()-1000);
+}
 }
 
 void MainWindow::pick(void)
