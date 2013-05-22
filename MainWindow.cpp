@@ -1,18 +1,13 @@
 #include	<iostream>
 #include	<QDir>
 #include	<QStringList>
+#include	<QTextStream>
 #include	<stdlib.h>
 #include	<unistd.h>
 
-#include <phonon/AudioOutput>
-#include <phonon/MediaObject>
-#include <phonon/MediaSource>
-#include <phonon/VideoWidget>
-#include <phonon/VideoPlayer>
-
-/*extern "C" {
+extern "C" {
 #include	<libavformat/avformat.h>
-}*/
+}
 
 #ifdef	WIN32
 #include	<windows.h>
@@ -52,8 +47,6 @@ MainWindow::MainWindow() : _vbox(this),
   _hbox2ndOptions.addWidget(&_clearPlaylist);
   _hbox2ndOptions.addWidget(&_start);
 
-  _splitter.addWidget(&_video);
-
   _menuBar.addMenu(&_PlayerMenu);
   _menuBar.addMenu(&_eyecatchMenu);
   _menuBar.addMenu(&_playMenu);
@@ -61,11 +54,11 @@ MainWindow::MainWindow() : _vbox(this),
   _hboxOptions.addWidget(&_menuBar);
   _hboxOptions.addWidget(&_shufle);
   _hboxOptions.addWidget(&_pick);
- _hboxOptions.addWidget(&_savePlaylistButton);
- _hboxOptions.addWidget(&_loadPlaylistButton);
-_savePlaylistButton.setText("Save");
-_loadPlaylistButton.setText("Load");
-  
+  _hboxOptions.addWidget(&_savePlaylistButton);
+  _hboxOptions.addWidget(&_loadPlaylistButton);
+  _savePlaylistButton.setText("Save");
+  _loadPlaylistButton.setText("Load");
+ 
   _changePlayerLocation = _PlayerMenu.addAction("select player location");
   _selectMplayer = _PlayerMenu.addAction("select Mplayer as Player");
   _selectVLC = _PlayerMenu.addAction("select VLC as Player");
@@ -95,27 +88,6 @@ _loadPlaylistButton.setText("Load");
   readKaraDirectory();
   readEyecatchDirectory();
 
-player =  new Phonon::VideoPlayer(Phonon::VideoCategory, &_video);
-player->show();
-    // player->play(QString(("/home/shun/asraf/karaoke/a.avi")));
-mo=player->mediaObject();
-//slider = new Phonon::SeekSlider;
-    // slider->setMediaObject(mo);
-
-    // slider->show();
-
-
-/*Phonon::MediaObject *music =
-     Phonon::createPlayer(Phonon::MusicCategory,
-                          Phonon::MediaSource("/home/shun/mysong.mp3"));
- music->play();
-*/
-mp=new QProcess(0);
-//QStringList args;
-//QString program = "mplayer";
-//QString windowId=QString::number(_video.winId());
-//args << "-wid" << windowId << "-slave" << "-quiet" << "/home/shun/asraf/karaoke/a.avi";
-//mp->start(program,args);
 }
 
 MainWindow::~MainWindow()
@@ -159,7 +131,6 @@ void	MainWindow::connector(void)
   /* mine */
 connect(&_find, SIGNAL(textEdited(QString)), this, SLOT(ctrlfedited(void)));
 connect(&_find2, SIGNAL(textEdited(QString)), this, SLOT(ctrlgedited(void)));
-//connect(&_video, SIGNAL(clicked(bool)), this, SLOT(onacliquesurlavideo(void)));
 }
 
 void	MainWindow::loadPlaylist()
@@ -220,7 +191,7 @@ void	MainWindow::readKaraDirectory()
 
   QStringList  filesName = dir.entryList();
   QStringList::const_iterator constIterator;
-  //av_register_all();
+  av_register_all();
 
   for (constIterator = filesName.constBegin(); constIterator != filesName.constEnd();
        ++constIterator)
@@ -230,24 +201,22 @@ void	MainWindow::readKaraDirectory()
 	  || (*constIterator).contains(".flv")
 	  || (*constIterator).contains(".mp4")
 	  || (*constIterator).contains(".ogv")
-	)
+	  )
 	{
 	  /*TODO: put this in thread, because it's very long.......*/
-	/*  AVFormatContext* pFormatCtx = avformat_alloc_context();
+	  AVFormatContext* pFormatCtx = avformat_alloc_context();
 	  int64_t duration = -1;
 	  if (!avformat_open_input(&pFormatCtx, (_karaDirectory.replace('/', SLASH) + QString(SLASH) + (*constIterator)).toLocal8Bit().constData(), NULL, NULL))
 	    {
-	//      avformat_find_stream_info(pFormatCtx, NULL);
-	//      duration = pFormatCtx->duration / AV_TIME_BASE;
-	      // std::cout << pFormatCtx->streams[0]->r_frame_rate.num << std::endl;
-              // std::cout << pFormatCtx->streams[0]->r_frame_rate.den << std::endl;
+	      avformat_find_stream_info(pFormatCtx, NULL);
+	      duration = pFormatCtx->duration / AV_TIME_BASE;
+	      std::cout << pFormatCtx->streams[0]->r_frame_rate.num << std::endl;
+              std::cout << pFormatCtx->streams[0]->r_frame_rate.den << std::endl;
 	    }
-	//  avformat_free_context(pFormatCtx);
-	  // QListWidgetItem* item = new Media((dir.path() + SLASH), *constIterator);
-	  // _FilesList.addItem(item);
-*/	  QTreeWidgetItem* nitem = new Media((dir.path() + SLASH), *constIterator);
+	  avformat_free_context(pFormatCtx);
+	  QTreeWidgetItem* nitem = new Media((dir.path() + SLASH), *constIterator);
 	  nitem->setText(0, ((Media *)nitem)->getName());
-	//  nitem->setText(1, durationToString(duration));
+	  nitem->setText(1, durationToString(duration));
 	  _FilesList.addTopLevelItem(nitem);
 	}
     }
@@ -446,32 +415,6 @@ void MainWindow::shufle(void)
       _karaList.insertItem(rand() % (len - 1), tmp);
       ++i;
     }
-}
-
-void MainWindow::mousePressEvent(QMouseEvent *e)
-{
-if(e->button() == Qt::LeftButton) {
-	std::cout << "clic" << mo->currentTime();
-std::cout.flush();
-mp->write("get_time_pos\n");
-setWindowTitle(mp->readAll());
-}
-if(e->button() == Qt::RightButton) {
-mo->seek(mo->currentTime()-1000);
-}
-}
-
-void MainWindow::mouseReleaseEvent(QMouseEvent *e)
-{
-if(e->button() == Qt::LeftButton) {
-	std::cout << "cloc" << mo->currentTime();
-std::cout.flush();
-mp->write("get_time_pos\n");
-setWindowTitle(mp->readAll());
-}
-if(e->button() == Qt::RightButton) {
-mo->seek(mo->currentTime()-1000);
-}
 }
 
 void MainWindow::pick(void)

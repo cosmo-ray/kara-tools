@@ -20,15 +20,6 @@
 #include <QProcess>
 #include "core.hh"
 #include "Media.hh"
-#include "phonon/videoplayer.h"
-//#include <phonon/MediaSource>
-#include <phonon/MediaObject>
-#include <phonon/BackendCapabilities>
-#include <phonon/AudioOutput>
-#include <phonon/MediaObject>
-#include <phonon/SeekSlider>
-#//include <phonon/VideoWidget>
-#//include <phonon/VideoPlayer>
 
 class	MainWindow : public QWidget
 {
@@ -42,7 +33,6 @@ private:
   QVBoxLayout _vbox;
   QSplitter   _splitter;
   QMenuBar    _menuBar;
-  //QListWidget _FilesList;
   QListWidget _karaList;
   QTreeWidget _FilesList;
   QHBoxLayout _hboxOptions;
@@ -73,21 +63,12 @@ private:
   QAction     *_endEyecatch;
   QAction     *_noDouble;
 
-  QWidget 	_video;
-  QProcess	*mp;
-Phonon::VideoPlayer *player;
-//Phonon::MediaSource ms;
-Phonon::MediaObject *mo;
-Phonon::SeekSlider *slider;
-
   MainWindow(const MainWindow &);
   const MainWindow &operator=(const MainWindow &);
   void connector(void); //methode use to place connect function
   void readKaraDirectory();
   void readEyecatchDirectory();
   void keyPressEvent(QKeyEvent *e); /*ctrl f*/
- void mousePressEvent(QMouseEvent *e);
- void mouseReleaseEvent(QMouseEvent *e);
   void clearDirList(void);
   const QString &selectSub(const QString &);
 

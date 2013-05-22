@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui phonon
+QT       += core gui
 
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -14,8 +14,7 @@ TEMPLATE = app
 
 QMAKE_CXXFLAGS += -std=c++11 
 
-#QMAKE_LFLAGS += -static-libgcc
-LIBS +=  -L/usr/lib
+LIBS +=  -L/usr/lib -lavdevice -lavformat -lavcodec -lavutil -lswscale
 
 SOURCES += main.cpp\
         mainwindow.cpp\
