@@ -248,6 +248,16 @@ void	MainWindow::readEyecatchDirectory()
     }
 }
 
+void genereASS(void)
+{
+  QProcess *p = new QProcess();
+  QStringList args;
+  args << "tool/a.lyr" << "tool/a.frm";
+  p->setStandardOutputFile("tool/a.ass");
+  p->start(QString("tool/./toy2ass"),args);
+}
+
+
 /*------------------- Slots methodes -------------------*/
 
 /*Files list slots*/
