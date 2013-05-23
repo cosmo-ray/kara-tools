@@ -82,3 +82,4 @@ void    toWinPath(QString &path)
          || (c >= 'A' && c <= 'Z'));
  }
 
+

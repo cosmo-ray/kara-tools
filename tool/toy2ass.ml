@@ -1,6 +1,7 @@
 let lfrm = [12,21;22,36;38,43;44,48;50,55;57,62;63,73;74,86;87,103];;
 let llyr = ["too";"ku ";"ki";"ra";"me";"ku ";"ho";"shi ";"ni"];;
 let fps = 23.976;;
+let trim s = if s.[String.length s - 1]='\r' then String.sub s 0 (String.length s - 1) else s;;
 
 let frametocs frame fps = int_of_float(float_of_int(frame) *. 100. /. fps);;
 
@@ -33,7 +34,7 @@ let phrase2string lfrm llyr fps =
 
 let file2list f = let r = ref [] in let a = open_in f in let _ = try while true do r:=(input_line a)::(!r) done with _->close_in a in List.rev (!r);;
 
-let frm1line s = let i = String.index s ' ' in int_of_string(String.sub s 0 i),int_of_string(String.sub s (i+1) (String.length s - i - 1));;
+let frm1line ss = let s = trim ss in let i = String.index s ' ' in int_of_string(String.sub s 0 i),int_of_string(String.sub s (i+1) (String.length s - i - 1));;
 
 let lyr1line s = let aux1 s = let i = String.index s '&' in String.sub s 0 i,String.sub s (i+1) (String.length s - i - 1) in
 		 let rec aux2 current res = try let a,b=aux1 current in aux2 b (a::res) with _->current::res in
