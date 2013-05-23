@@ -13,12 +13,12 @@ Media::Media(const QString &path)
 {
 }
 
-const QString &Media::getPath()
+const QString &Media::getPath() const
 {
   return (_path);
 }
 
-const QString Media::getName()
+const QString Media::getName() const
 {
-  return (static_cast<QListWidgetItem *>(this)->text());
+  return (static_cast<const QListWidgetItem *>(this)->text());
 }

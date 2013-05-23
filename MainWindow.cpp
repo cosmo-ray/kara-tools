@@ -248,13 +248,14 @@ void	MainWindow::readEyecatchDirectory()
     }
 }
 
-void genereASS(void)
+void MainWindow::genereASS(const Media &media) const
 {
   QProcess *p = new QProcess();
   QStringList args;
-  args << "tool/a.lyr" << "tool/a.frm";
-  p->setStandardOutputFile("tool/a.ass");
-  p->start(QString("tool/./toy2ass"),args);
+  args << media.getPath();
+  args << "29.97";
+  //p->setStandardOutputFile("tool/a.ass");
+  p->execute("tool/toy2assConverter.ml",args);
 }
 
 
@@ -265,13 +266,17 @@ void genereASS(void)
 void	MainWindow::addToPlaylist(QTreeWidgetItem *item)
 {
   QListWidgetItem* newItem = new Media(static_cast<Media*>(item)->getPath());
+  QString pathAss = changeExtansion(static_cast<Media*>(item)->getPath(), "ass");
+  if (access(pathAss.toLocal8Bit().constData(), 0))
+    {
+      std::cout << "cant find " << pathAss.toLocal8Bit().constData() << std::endl;
+      genereASS(*static_cast<Media*>(item));
+	// try use OcamlScript
+    }
   if (!_noDouble->isChecked())
     _karaList.addItem(newItem);
   else
     {
-      // std::cout << item->text().toLocal8Bit().constData() << std::endl;
-      // if (_karaList.count())
-      // 	std::cout << _karaList.item(0)->text().toLocal8Bit().constData() << std::endl;
       if (_karaList.findItems(static_cast<Media*>(item)->getName(), Qt::MatchCaseSensitive).empty())
 	_karaList.addItem(newItem);
       else
@@ -393,16 +398,9 @@ void MainWindow::start(void)
     {
       listsKara += " ";
       listsKara += "\"";
-      // listsKara += _karaDirectory.replace('/', SLASH);
-      // listsKara += SLASH;
-      // listsKara += _karaList.item(i)->text();
-      // std::cout << "tata" << std::endl;
-      // printf("%p\n", _karaList.item(i));
       listsKara += static_cast<Media*>(_karaList.item(i))->getPath();
-
       listsKara += "\"";
-      listsKara += _playerOpt; //" -fs -ass";
-      // std::cout << listsKara.toLocal8Bit().constData() << std::endl;
+      listsKara += _playerOpt;
       ++i;
     }
   listsKara += endlist;

@@ -75,6 +75,9 @@ private:
   void  changePlayer(int i);
 
 private slots:
+  /*private methode*/
+  void genereASS(const Media &media) const;
+
   /*Files list slots*/
   void addToPlaylist(QTreeWidgetItem *);
   
@@ -93,12 +96,12 @@ private slots:
   void changePlayerLocation(void);
   void selectVLC(void);
   void selectMplayer(void);
-void	savePlaylist(void);
-void	loadPlaylist(void);
+  void	savePlaylist(void);
+  void	loadPlaylist(void);
   
   //void onacliquesurlavideo(void);
   void ctrlfedited(void);
-void ctrlgedited(void);
+  void ctrlgedited(void);
 };
 
 #endif
