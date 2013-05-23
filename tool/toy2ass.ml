@@ -26,7 +26,7 @@ let inttohour n = let cs = n mod 100 in let tts = n/100 in let s = tts mod 60 in
 
 let phrase2string lfrm llyr fps = 
   let aux lyr oth = let l = List.combine lyr oth in List.fold_left (fun a->fun (b,c)->a^(syllabe c b)) "" l in
-  let sta,fin,oth = extractinfo (lfrmtolcs lfrm fps) in
+  let sta,fin,oth2 = extractinfo (lfrmtolcs lfrm fps) in let oth = List.rev oth2 in
   "Dialogue: 0,"^inttohour sta^","^inttohour fin^",Default,,0,0,0,,"^aux llyr oth
 ;;
 
