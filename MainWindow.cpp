@@ -4,6 +4,7 @@
 #include	<QTextStream>
 #include	<stdlib.h>
 #include	<unistd.h>
+#include	<sstream>
 
 extern "C" {
 #include	<libavformat/avformat.h>
@@ -204,19 +205,21 @@ void	MainWindow::readKaraDirectory()
 	  )
 	{
 	  /*TODO: put this in thread, because it's very long.......*/
+
+	  QTreeWidgetItem* nitem = new Media((dir.path() + SLASH), *constIterator);
 	  AVFormatContext* pFormatCtx = avformat_alloc_context();
-	  int64_t duration = -1;
+	  static_cast<Media *>(nitem)->setDuration(-1);
 	  if (!avformat_open_input(&pFormatCtx, (_karaDirectory.replace('/', SLASH) + QString(SLASH) + (*constIterator)).toLocal8Bit().constData(), NULL, NULL))
 	    {
 	      avformat_find_stream_info(pFormatCtx, NULL);
-	      duration = pFormatCtx->duration / AV_TIME_BASE;
-	      std::cout << pFormatCtx->streams[0]->r_frame_rate.num << std::endl;
+	      static_cast<Media *>(nitem)->setDuration(pFormatCtx->duration / AV_TIME_BASE);
+	      static_cast<Media *>(nitem)->setFps((float)pFormatCtx->streams[0]->r_frame_rate.num / 1000.0);
+	      std::cout << static_cast<Media *>(nitem)->getFps() << std::endl;
               std::cout << pFormatCtx->streams[0]->r_frame_rate.den << std::endl;
 	    }
 	  avformat_free_context(pFormatCtx);
-	  QTreeWidgetItem* nitem = new Media((dir.path() + SLASH), *constIterator);
 	  nitem->setText(0, ((Media *)nitem)->getName());
-	  nitem->setText(1, durationToString(duration));
+	  nitem->setText(1, durationToString(static_cast<Media *>(nitem)->getDuration()));
 	  _FilesList.addTopLevelItem(nitem);
 	}
     }
@@ -252,8 +255,11 @@ void MainWindow::genereASS(const Media &media) const
 {
   QProcess *p = new QProcess();
   QStringList args;
+  std::ostringstream ss;
+
   args << media.getPath();
-  args << "29.97";
+  ss << media.getFps();
+  args << QString::fromStdString(ss.str());
   //p->setStandardOutputFile("tool/a.ass");
   p->execute("tool/toy2assConverter.ml",args);
 }

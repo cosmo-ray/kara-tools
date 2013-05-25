@@ -10,6 +10,15 @@ public:
   Media(const QString &path);
   const QString &getPath() const;
   const QString getName() const;
+  int	getDuration(void) const;
+  float	getFps(void) const;
+  
+  void	setFps(float fps);
+  void	setDuration(int64_t duration);
+  
+
 private:
   QString	_path;
+  int64_t _duration;
+  float	_fps;
 };
