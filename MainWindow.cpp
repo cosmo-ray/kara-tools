@@ -276,7 +276,8 @@ void	MainWindow::addToPlaylist(QTreeWidgetItem *item)
   if (access(pathAss.toLocal8Bit().constData(), 0))
     {
       std::cout << "cant find " << pathAss.toLocal8Bit().constData() << std::endl;
-      genereASS(*static_cast<Media*>(item));
+      if (!access(changeExtansion(static_cast<Media*>(item)->getPath(), "frm").toLocal8Bit().constData(), 0))
+	genereASS(*static_cast<Media*>(item));
 	// try use OcamlScript
     }
   if (!_noDouble->isChecked())
