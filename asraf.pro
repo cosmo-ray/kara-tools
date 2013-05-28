@@ -6,6 +6,7 @@
 
 QT       += core gui
 
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = asraf
@@ -15,8 +16,8 @@ QMAKE_CXXFLAGS += -std=c++11
 
 
 #QMAKE_LFLAGS += -static-libgcc
-LIBS +=  -L/usr/lib -L$$PWD/lib/ -lavdevice -lavformat -lavcodec -lavutil -lswscale
-
+win32: LIBS +=  -L$$PWD/lib/ -lavdevice -lavformat -lavcodec -lavutil -lswscale
+unix:LIBS +=  -L/usr/lib -lavdevice -lavformat -lavcodec -lavutil -lswscale
 #win32: PRE_TARGETDEPS += $$PWD/lib/avformat.lib $$PWD/lib/avcodec.lib $$PWD/lib/avutil.lib $$PWD/lib/avdevice.lib $$PWD/lib/swscale.lib
 
 INCLUDEPATH += $$PWD/include

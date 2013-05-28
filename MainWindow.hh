@@ -17,6 +17,7 @@
 #include <QLineEdit>
 #include <QSplitter>
 #include <QTreeWidget>
+#include <QProcess>
 #include "core.hh"
 #include "Media.hh"
 
@@ -32,7 +33,6 @@ private:
   QVBoxLayout _vbox;
   QSplitter   _splitter;
   QMenuBar    _menuBar;
-  //QListWidget _FilesList;
   QListWidget _karaList;
   QTreeWidget _FilesList;
   QHBoxLayout _hboxOptions;
@@ -42,6 +42,8 @@ private:
   QPushButton _pick;
   QPushButton _clearPlaylist;
   QPushButton _changeDirectory;
+  QPushButton _savePlaylistButton;
+  QPushButton _loadPlaylistButton;
   QLineEdit   _find;
   QLineEdit   _find2;
   QString     _player;
@@ -73,6 +75,9 @@ private:
   void  changePlayer(int i);
 
 private slots:
+  /*private methode*/
+  void genereASS(const Media &media) const;
+
   /*Files list slots*/
   void addToPlaylist(QTreeWidgetItem *);
   
@@ -91,9 +96,12 @@ private slots:
   void changePlayerLocation(void);
   void selectVLC(void);
   void selectMplayer(void);
-
+  void	savePlaylist(void);
+  void	loadPlaylist(void);
+  
+  //void onacliquesurlavideo(void);
   void ctrlfedited(void);
-void ctrlgedited(void);
+  void ctrlgedited(void);
 };
 
 #endif

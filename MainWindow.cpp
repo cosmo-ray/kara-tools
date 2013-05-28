@@ -1,8 +1,10 @@
 #include	<iostream>
 #include	<QDir>
 #include	<QStringList>
+#include	<QTextStream>
 #include	<stdlib.h>
 #include	<unistd.h>
+#include	<sstream>
 
 extern "C" {
 #include	<libavformat/avformat.h>
@@ -38,6 +40,7 @@ MainWindow::MainWindow() : _vbox(this),
   QStringList ColumnNames;
   ColumnNames << "karaoke name" << "lenght" << "saki";
   _FilesList.setHeaderLabels(ColumnNames);
+  _FilesList.setColumnWidth( 0, 500 );
   _splitter.addWidget(&_FilesList);
   _splitter.addWidget(&_karaList);
 
@@ -52,7 +55,11 @@ MainWindow::MainWindow() : _vbox(this),
   _hboxOptions.addWidget(&_menuBar);
   _hboxOptions.addWidget(&_shufle);
   _hboxOptions.addWidget(&_pick);
-  
+  _hboxOptions.addWidget(&_savePlaylistButton);
+  _hboxOptions.addWidget(&_loadPlaylistButton);
+  _savePlaylistButton.setText("Save");
+  _loadPlaylistButton.setText("Load");
+ 
   _changePlayerLocation = _PlayerMenu.addAction("select player location");
   _selectMplayer = _PlayerMenu.addAction("select Mplayer as Player");
   _selectVLC = _PlayerMenu.addAction("select VLC as Player");
@@ -81,6 +88,7 @@ MainWindow::MainWindow() : _vbox(this),
   connector();
   readKaraDirectory();
   readEyecatchDirectory();
+
 }
 
 MainWindow::~MainWindow()
@@ -116,6 +124,9 @@ void	MainWindow::connector(void)
   connect(&_clearPlaylist, SIGNAL(clicked(bool)), this, SLOT(clearPlaylist(void)));
   connect(&_changeDirectory, SIGNAL(clicked(bool)), this, SLOT(changeDirectory(void)));
 
+  connect(&_savePlaylistButton, SIGNAL(clicked(bool)), this, SLOT(savePlaylist(void)));
+ connect(&_loadPlaylistButton, SIGNAL(clicked(bool)), this, SLOT(loadPlaylist(void)));
+
   /*check box*/
 
   /* mine */
@@ -123,6 +134,50 @@ connect(&_find, SIGNAL(textEdited(QString)), this, SLOT(ctrlfedited(void)));
 connect(&_find2, SIGNAL(textEdited(QString)), this, SLOT(ctrlgedited(void)));
 }
 
+void	MainWindow::loadPlaylist()
+{
+std::cout << "lol";
+std::cout.flush();
+QString filename = QFileDialog::getOpenFileName(this, tr("Open Playlist"),
+                            "/home/shun/",
+                            tr("Playlist (*.pls)"));
+QFile f(filename);
+f.open(QIODevice::ReadOnly | QIODevice::Text);
+QTextStream in(&f);
+QListWidgetItem* nitem;
+QString line;
+std::cout << filename.toUtf8().constData();
+// load data in f
+while (!in.atEnd()) {
+line = in.readLine();
+std::cout << line.toUtf8().constData() << std::endl;
+std::cout.flush();
+nitem = new Media(line);
+_karaList.addItem(nitem);
+//newItem = new Media(static_cast<Media*>(item)->getPath());
+//String line = in.readLine();
+}
+// end load
+f.close();
+}
+
+void	MainWindow::savePlaylist()
+{
+int i;
+QString filename = QFileDialog::getSaveFileName(this, tr("Save Playlist"),
+                            "/home/shun/lastplaylist.pls",
+                            tr("Playlist (*.pls)"));
+QFile f(filename);
+f.open(QIODevice::WriteOnly);
+QTextStream out(&f);
+// store data in f
+for(i=0;i<_karaList.count();i++) {
+//f.write(static_cast<Media*>(_karaList.item(i))->getPath().toUtf8().constData());
+out << static_cast<Media*>(_karaList.item(i))->getPath().toUtf8().constData() << "\n";
+}
+// end store
+f.close();
+}
 
 void	MainWindow::readKaraDirectory()
 {
@@ -133,7 +188,7 @@ void	MainWindow::readKaraDirectory()
       return ;
     }
 
-  std::cout << (dir.path() + SLASH).toLocal8Bit().constData() << std::endl;
+  // std::cout << (dir.path() + SLASH).toLocal8Bit().constData() << std::endl;
 
   QStringList  filesName = dir.entryList();
   QStringList::const_iterator constIterator;
@@ -147,24 +202,25 @@ void	MainWindow::readKaraDirectory()
 	  || (*constIterator).contains(".flv")
 	  || (*constIterator).contains(".mp4")
 	  || (*constIterator).contains(".ogv")
-	)
+	  )
 	{
 	  /*TODO: put this in thread, because it's very long.......*/
+
+	  QTreeWidgetItem* nitem = new Media((dir.path() + SLASH), *constIterator);
 	  AVFormatContext* pFormatCtx = avformat_alloc_context();
-	  int64_t duration = -1;
+	  static_cast<Media *>(nitem)->setDuration(-1);
 	  if (!avformat_open_input(&pFormatCtx, (_karaDirectory.replace('/', SLASH) + QString(SLASH) + (*constIterator)).toLocal8Bit().constData(), NULL, NULL))
 	    {
 	      avformat_find_stream_info(pFormatCtx, NULL);
-	      duration = pFormatCtx->duration / AV_TIME_BASE;
-	      std::cout << pFormatCtx->streams[0]->r_frame_rate.num << std::endl;
+	      static_cast<Media *>(nitem)->setDuration(pFormatCtx->duration / AV_TIME_BASE);
+	      static_cast<Media *>(nitem)->setFps((float)pFormatCtx->streams[0]->r_frame_rate.num /
+						  (float)pFormatCtx->streams[0]->r_frame_rate.den);
+	      std::cout << static_cast<Media *>(nitem)->getFps() << std::endl;
               std::cout << pFormatCtx->streams[0]->r_frame_rate.den << std::endl;
 	    }
 	  avformat_free_context(pFormatCtx);
-	  // QListWidgetItem* item = new Media((dir.path() + SLASH), *constIterator);
-	  // _FilesList.addItem(item);
-	  QTreeWidgetItem* nitem = new Media((dir.path() + SLASH), *constIterator);
 	  nitem->setText(0, ((Media *)nitem)->getName());
-	  nitem->setText(1, durationToString(duration));
+	  nitem->setText(1, durationToString(static_cast<Media *>(nitem)->getDuration()));
 	  _FilesList.addTopLevelItem(nitem);
 	}
     }
@@ -196,6 +252,20 @@ void	MainWindow::readEyecatchDirectory()
     }
 }
 
+void MainWindow::genereASS(const Media &media) const
+{
+  QProcess *p = new QProcess();
+  QStringList args;
+  std::ostringstream ss;
+
+  args << media.getPath();
+  ss << media.getFps();
+  args << QString::fromStdString(ss.str());
+  //p->setStandardOutputFile("tool/a.ass");
+  p->execute("tool/toy2assConverter.ml",args);
+}
+
+
 /*------------------- Slots methodes -------------------*/
 
 /*Files list slots*/
@@ -203,13 +273,18 @@ void	MainWindow::readEyecatchDirectory()
 void	MainWindow::addToPlaylist(QTreeWidgetItem *item)
 {
   QListWidgetItem* newItem = new Media(static_cast<Media*>(item)->getPath());
+  QString pathAss = changeExtansion(static_cast<Media*>(item)->getPath(), "ass");
+  if (access(pathAss.toLocal8Bit().constData(), 0))
+    {
+      std::cout << "cant find " << pathAss.toLocal8Bit().constData() << std::endl;
+      if (!access(changeExtansion(static_cast<Media*>(item)->getPath(), "frm").toLocal8Bit().constData(), 0))
+	genereASS(*static_cast<Media*>(item));
+	// try use OcamlScript
+    }
   if (!_noDouble->isChecked())
     _karaList.addItem(newItem);
   else
     {
-      // std::cout << item->text().toLocal8Bit().constData() << std::endl;
-      // if (_karaList.count())
-      // 	std::cout << _karaList.item(0)->text().toLocal8Bit().constData() << std::endl;
       if (_karaList.findItems(static_cast<Media*>(item)->getName(), Qt::MatchCaseSensitive).empty())
 	_karaList.addItem(newItem);
       else
@@ -331,16 +406,9 @@ void MainWindow::start(void)
     {
       listsKara += " ";
       listsKara += "\"";
-      // listsKara += _karaDirectory.replace('/', SLASH);
-      // listsKara += SLASH;
-      // listsKara += _karaList.item(i)->text();
-      std::cout << "tata" << std::endl;
-      printf("%p\n", _karaList.item(i));
       listsKara += static_cast<Media*>(_karaList.item(i))->getPath();
-
       listsKara += "\"";
-      listsKara += _playerOpt; //" -fs -ass";
-      std::cout << listsKara.toLocal8Bit().constData() << std::endl;
+      listsKara += _playerOpt;
       ++i;
     }
   listsKara += endlist;
@@ -405,7 +473,7 @@ void MainWindow::changePlayerLocation(void)
 
 void MainWindow::ctrlfedited(void)
 {
-std::cout << _find.text().toUtf8().constData() << std::endl;
+// std::cout << _find.text().toUtf8().constData() << std::endl;
 //QStringList sl = _find.text().split(" ");
 QList<QTreeWidgetItem *> iList = _FilesList.findItems(_find.text(), Qt::MatchContains);;
 int i;
@@ -422,7 +490,7 @@ for (i = 0; i < iList.size(); i++)
 
 void MainWindow::ctrlgedited(void)
 {
-std::cout << _find2.text().toUtf8().constData() << std::endl;
+// std::cout << _find2.text().toUtf8().constData() << std::endl;
 QList<QTreeWidgetItem *> iList = _FilesList.findItems(_find2.text(), Qt::MatchContains);
 if (iList.size() > 0) {
 if (_ctrlg < 0) _ctrlg = 0;

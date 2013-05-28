@@ -8,8 +8,17 @@ class	Media : public QListWidgetItem, public QTreeWidgetItem
 public:
   Media(const QString &dirPath, const QString &name);
   Media(const QString &path);
-  const QString &getPath();
-  const QString getName();
+  const QString &getPath() const;
+  const QString getName() const;
+  int	getDuration(void) const;
+  float	getFps(void) const;
+  
+  void	setFps(float fps);
+  void	setDuration(int64_t duration);
+  
+
 private:
   QString	_path;
+  int64_t _duration;
+  float	_fps;
 };

@@ -56,29 +56,42 @@ void    toWinPath(QString &path)
 #endif
 }
 
- void	execPlaylist(const QString &player, const QString &listsKara)
+void	execPlaylist(const QString &player, const QString &listsKara)
 {
 #ifdef Q_OS_WIN32
   system(QString(
-  QString("\"") + "\"" + player + "\""
-    + listsKara + "\""
-    ).toLocal8Bit().constData()
-    );
+		 QString("\"") + "\"" + player + "\""
+		 + listsKara + "\""
+		 ).toLocal8Bit().constData()
+	 );
 #else
   system(QString(
-  player
-    + listsKara
-    ).toLocal8Bit().constData()
-    );
+		 player
+		 + listsKara
+		 ).toLocal8Bit().constData()
+	 );
   exit(0);
 #endif
 }
 
- bool isAlphaNum(QCharRef c)
- {
- return ((c >= 'a' && c <= 'z')
-         || (c >= '0' && c <= '9')
-         || (c  == ' ' || c == '\'')
-         || (c >= 'A' && c <= 'Z'));
- }
+bool isAlphaNum(QCharRef c)
+{
+  return ((c >= 'a' && c <= 'z')
+	  || (c >= '0' && c <= '9')
+	  || (c  == ' ' || c == '\'')
+	  || (c >= 'A' && c <= 'Z'));
+}
 
+
+QString changeExtansion(const QString &path, const char *ext)
+{
+  QString ret = path;
+  int len = path.length();
+  int i;
+  
+  for (i = 0; i < 3; ++i)
+    {
+      ret[len - i - 1] = ext[2 - i];
+    }
+  return (ret);
+}
