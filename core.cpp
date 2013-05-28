@@ -16,14 +16,11 @@ QString  getPlayerCmd<MPLAYER>()
 {
   // std::cout << "still alive" << std::endl;
 #ifdef	Q_OS_WIN32
-    QString ret = "\"" + QDir::currentPath().replace("/", "\\");
+    QString ret = QDir::currentPath();
 
-  ret += "\\mplayer";
-  ret += "\"";
+  ret += "/mplayer";
   return (ret);
 #else
-  QString ret = QDir::currentPath().replace("/", "\\");
-
   return ("mplayer");
 #endif
 }
@@ -58,17 +55,19 @@ void    toWinPath(QString &path)
 
 void	execPlaylist(const QString &player, const QString &listsKara)
 {
+   QProcess p;
+
 #ifdef Q_OS_WIN32
   system(QString(
 		 QString("\"") + "\"" + player + "\""
 		 + listsKara + "\""
-		 ).toLocal8Bit().constData()
+         ).toLocal8Bit().constData()
 	 );
 #else
   system(QString(
 		 player
 		 + listsKara
-		 ).toLocal8Bit().constData()
+         ).toLocal8Bit().constData()
 	 );
   exit(0);
 #endif

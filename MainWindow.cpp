@@ -136,22 +136,17 @@ connect(&_find2, SIGNAL(textEdited(QString)), this, SLOT(ctrlgedited(void)));
 
 void	MainWindow::loadPlaylist()
 {
-std::cout << "lol";
-std::cout.flush();
 QString filename = QFileDialog::getOpenFileName(this, tr("Open Playlist"),
-                            "/home/shun/",
+                            "./",
                             tr("Playlist (*.pls)"));
 QFile f(filename);
 f.open(QIODevice::ReadOnly | QIODevice::Text);
 QTextStream in(&f);
 QListWidgetItem* nitem;
 QString line;
-std::cout << filename.toUtf8().constData();
 // load data in f
 while (!in.atEnd()) {
 line = in.readLine();
-std::cout << line.toUtf8().constData() << std::endl;
-std::cout.flush();
 nitem = new Media(line);
 _karaList.addItem(nitem);
 //newItem = new Media(static_cast<Media*>(item)->getPath());
@@ -165,7 +160,7 @@ void	MainWindow::savePlaylist()
 {
 int i;
 QString filename = QFileDialog::getSaveFileName(this, tr("Save Playlist"),
-                            "/home/shun/lastplaylist.pls",
+                            "./lastplaylist.pls",
                             tr("Playlist (*.pls)"));
 QFile f(filename);
 f.open(QIODevice::WriteOnly);
