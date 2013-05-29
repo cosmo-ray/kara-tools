@@ -136,47 +136,47 @@ connect(&_find2, SIGNAL(textEdited(QString)), this, SLOT(ctrlgedited(void)));
 
 void	MainWindow::loadPlaylist()
 {
-std::cout << "lol";
-std::cout.flush();
-QString filename = QFileDialog::getOpenFileName(this, tr("Open Playlist"),
-                            "/home/shun/",
-                            tr("Playlist (*.pls)"));
-QFile f(filename);
-f.open(QIODevice::ReadOnly | QIODevice::Text);
-QTextStream in(&f);
-QListWidgetItem* nitem;
-QString line;
-std::cout << filename.toUtf8().constData();
-// load data in f
-while (!in.atEnd()) {
-line = in.readLine();
-std::cout << line.toUtf8().constData() << std::endl;
-std::cout.flush();
-nitem = new Media(line);
-_karaList.addItem(nitem);
-//newItem = new Media(static_cast<Media*>(item)->getPath());
-//String line = in.readLine();
-}
-// end load
-f.close();
+  std::cout << "lol";
+  std::cout.flush();
+  QString filename = QFileDialog::getOpenFileName(this, tr("Open Playlist"),
+						  "./",
+						  tr("Playlist (*.pls)"));
+  QFile f(filename);
+  f.open(QIODevice::ReadOnly | QIODevice::Text);
+  QTextStream in(&f);
+  QListWidgetItem* nitem;
+  QString line;
+  std::cout << filename.toUtf8().constData();
+  // load data in f
+  while (!in.atEnd()) {
+    line = in.readLine();
+    std::cout << line.toUtf8().constData() << std::endl;
+    std::cout.flush();
+    nitem = new Media(line);
+    _karaList.addItem(nitem);
+    //newItem = new Media(static_cast<Media*>(item)->getPath());
+    //String line = in.readLine();
+  }
+  // end load
+  f.close();
 }
 
 void	MainWindow::savePlaylist()
 {
-int i;
-QString filename = QFileDialog::getSaveFileName(this, tr("Save Playlist"),
-                            "/home/shun/lastplaylist.pls",
-                            tr("Playlist (*.pls)"));
-QFile f(filename);
-f.open(QIODevice::WriteOnly);
-QTextStream out(&f);
-// store data in f
-for(i=0;i<_karaList.count();i++) {
-//f.write(static_cast<Media*>(_karaList.item(i))->getPath().toUtf8().constData());
-out << static_cast<Media*>(_karaList.item(i))->getPath().toUtf8().constData() << "\n";
-}
-// end store
-f.close();
+  int i;
+  QString filename = QFileDialog::getSaveFileName(this, tr("Save Playlist"),
+						  "./lastplaylist.pls",
+						  tr("Playlist (*.pls)"));
+  QFile f(filename);
+  f.open(QIODevice::WriteOnly);
+  QTextStream out(&f);
+  // store data in f
+  for(i=0;i<_karaList.count();i++) {
+    //f.write(static_cast<Media*>(_karaList.item(i))->getPath().toUtf8().constData());
+    out << static_cast<Media*>(_karaList.item(i))->getPath().toUtf8().constData() << "\n";
+  }
+  // end store
+  f.close();
 }
 
 void	MainWindow::readKaraDirectory()
@@ -197,12 +197,7 @@ void	MainWindow::readKaraDirectory()
   for (constIterator = filesName.constBegin(); constIterator != filesName.constEnd();
        ++constIterator)
     {
-      if ((*constIterator).contains(".avi")
-	  || (*constIterator).contains(".mkv")
-	  || (*constIterator).contains(".flv")
-	  || (*constIterator).contains(".mp4")
-	  || (*constIterator).contains(".ogv")
-	  )
+      if (isVideo(*constIterator))
 	{
 	  /*TODO: put this in thread, because it's very long.......*/
 
@@ -242,15 +237,20 @@ void	MainWindow::readEyecatchDirectory()
   for (constIterator = filesName.constBegin(); constIterator != filesName.constEnd();
        ++constIterator)
     {
-      if ((*constIterator).contains(".avi")
-      || (*constIterator).contains(".mkv")
-      || (*constIterator).contains(".flv")
-      || (*constIterator).contains(".mp4")
-      || (*constIterator).contains(".ogv")
-    )
-      _eyecatchList.push_back(*constIterator);
+      if (isVideo(*constIterator))
+	_eyecatchList.push_back(*constIterator);
     }
 }
+
+bool	MainWindow::isVideo(const QString &str)
+{
+  return (str.contains(".avi")
+      || str.contains(".mkv")
+      || str.contains(".flv")
+      || str.contains(".mp4")
+      || str.contains(".ogv"));
+}
+
 
 void MainWindow::genereASS(const Media &media) const
 {
@@ -261,10 +261,26 @@ void MainWindow::genereASS(const Media &media) const
   args << media.getPath();
   ss << media.getFps();
   args << QString::fromStdString(ss.str());
-  //p->setStandardOutputFile("tool/a.ass");
   p->execute("tool/toy2ass",args);
 }
 
+void	MainWindow::saveConfig()
+{
+  int i;
+  QString filename = QFileDialog::getSaveFileName(this, tr("Save Playlist"),
+						  "./lastplaylist.pls",
+						  tr("Playlist (*.pls)"));
+  QFile f(filename);
+  f.open(QIODevice::WriteOnly);
+  QTextStream out(&f);
+  // store data in f
+  for(i=0;i<_karaList.count();i++) {
+    //f.write(static_cast<Media*>(_karaList.item(i))->getPath().toUtf8().constData());
+    out << static_cast<Media*>(_karaList.item(i))->getPath().toUtf8().constData() << "\n";
+  }
+  // end store
+  f.close();  
+}
 
 /*------------------- Slots methodes -------------------*/
 

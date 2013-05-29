@@ -71,8 +71,10 @@ private:
   void keyPressEvent(QKeyEvent *e); /*ctrl f*/
   void clearDirList(void);
   const QString &selectSub(const QString &);
+  bool	isVideo(const QString &);
 
   void  changePlayer(int i);
+  void	saveConfig();
 
 private slots:
   /*private methode*/
