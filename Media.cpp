@@ -8,13 +8,13 @@
 */
 
 Media::Media(const QString &dirPath, const QString &name)
-  : QListWidgetItem(QFileInfo(name).baseName()), _path(dirPath + name), _duration(-1), _fps(0)
+  : QListWidgetItem(QFileInfo(name).completeBaseName()), _path(dirPath + name), _duration(-1), _fps(0)
 {
   std::cout << _path.toLocal8Bit().constData() << std::endl;
 }
 
 Media::Media(const QString &path)
-  : QListWidgetItem(QFileInfo(path).baseName()), _path(path), _duration(-1), _fps(0)
+  : QListWidgetItem(QFileInfo(path).completeBaseName()), _path(path), _duration(-1), _fps(0)
 {
 }
 
