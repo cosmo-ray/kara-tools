@@ -262,7 +262,7 @@ void MainWindow::genereASS(const Media &media) const
   ss << media.getFps();
   args << QString::fromStdString(ss.str());
   //p->setStandardOutputFile("tool/a.ass");
-  p->execute("tool/toy2assConverter.ml",args);
+  p->execute("tool/toy2ass",args);
 }
 
 
