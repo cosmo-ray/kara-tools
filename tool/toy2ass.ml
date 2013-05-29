@@ -53,20 +53,7 @@ let toy2ass lyrFile frmFile fps =
 ;;
 
 let assHeader =
-["[Script Info]";
-"Title: Default Aegisub file";
-"ScriptType: v4.00+";
-"WrapStyle: 0";
-"ScaledBorderAndShadow: yes";
-"Collisions: Normal";
-"Scroll Position: 1";
-"Active Line: 7";
-"Video Zoom Percent: 1";
-"Last Style Storage: Default";
-"Audio URI: Sukeban Deka II ed 3.avi";
-"YCbCr Matrix: None";
-"";
-"[V4+ Styles]";
+["[V4+ Styles]";
 "Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding";
 "Style: Default,Arial,20,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,2,8,10,10,10,1";
 "";
