@@ -24,11 +24,13 @@ let sur2 n = (if n<10 then "0" else "")^string_of_int(n);;
 let inttohour n = let cs = n mod 100 in let tts = n/100 in let s = tts mod 60 in let ttm = tts / 60 in let h = ttm / 60 in let m = ttm mod 60 in
    string_of_int(h)^":"^sur2 m^":"^sur2 s^"."^sur2 cs;;
 
+
 let phrase2string lfrm llyr fps = 
   let aux lyr oth = let l = List.combine lyr oth in List.fold_left (fun a->fun (b,c)->a^(syllabe c b)) "" l in
-  let sta,fin,oth2 = extractinfo (lfrmtolcs lfrm fps) in let oth = List.rev oth2 in
-  "Dialogue: 0,"^inttohour sta^","^inttohour fin^",Default,,0,0,0,,"^aux llyr oth
+  let sta,fin,oth2 = extractinfo (lfrmtolcs lfrm fps) in let oth = List.rev oth2 in let (sta2,prev) = if sta<100 then (0,sta) else (sta-100,100) in
+  "Dialogue: 0,"^inttohour sta2^","^inttohour fin^",Default,,0,0,0,,"^aux (""::llyr) (prev::oth)
 ;;
+
 
 
 let file2list f = let r = ref [] in let a = open_in f in let _ = try while true do r:=(input_line a)::(!r) done with _->close_in a in List.rev (!r);;
