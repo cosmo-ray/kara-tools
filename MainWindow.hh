@@ -47,9 +47,9 @@ private:
   QLineEdit   _find;
   QLineEdit   _find2;
   QString     _player;
+  QString     _playerOpt;
   QString     _karaDirectory;
   QString     _eyecatchDirectory;
-  QString     _playerOpt;
   QStringList _eyecatchList;
   int	      _ctrlg;
   bool	      _ctrlgcheck;
@@ -63,6 +63,17 @@ private:
   QAction     *_endEyecatch;
   QAction     *_noDouble;
 
+  enum Conf
+    {
+      EYECATCH_BEGIN = 0,
+      EYECATCH_END,
+      NO_DOUBLE,
+      SELECTED_PLAYER,
+      VLC_PATH,
+      MPLAYER_PATH,
+      END
+    };
+
   MainWindow(const MainWindow &);
   const MainWindow &operator=(const MainWindow &);
   void connector(void); //methode use to place connect function
@@ -71,8 +82,12 @@ private:
   void keyPressEvent(QKeyEvent *e); /*ctrl f*/
   void clearDirList(void);
   const QString &selectSub(const QString &);
+  bool	isVideo(const QString &);
 
   void  changePlayer(int i);
+  void	saveConfig();
+  void	loadConfig();
+  Conf	getConfTabIdx(const QString &);
 
 private slots:
   /*private methode*/
