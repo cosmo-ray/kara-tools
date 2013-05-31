@@ -78,14 +78,11 @@ MainWindow::MainWindow() : _vbox(this),
 
   _beginEyecatch = _eyecatchMenu.addAction("begin eyecatch");
   _beginEyecatch->setCheckable(true);
-  _beginEyecatch->setChecked(true);
   _endEyecatch = _eyecatchMenu.addAction("end eyecatch");
   _endEyecatch->setCheckable(true);
-  _endEyecatch->setChecked(true);
 
   _noDouble = _playMenu.addAction("no double ?");
   _noDouble->setCheckable(true);
-  _noDouble->setChecked(true);
     
   _vbox.addLayout(&_hboxOptions);
   _vbox.addLayout(&_hbox2ndOptions);
