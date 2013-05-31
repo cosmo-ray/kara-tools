@@ -5,6 +5,7 @@
 #include	<string>
 #include	<iostream>
 #include	<QString>
+#include    <QProcess>
 
 #ifdef	WIN32
 #define	SLASH	'\\'
