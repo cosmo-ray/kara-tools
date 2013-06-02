@@ -146,8 +146,6 @@ connect(&_find2, SIGNAL(textEdited(QString)), this, SLOT(ctrlgedited(void)));
 
 void	MainWindow::loadPlaylist()
 {
-  std::cout << "lol";
-  std::cout.flush();
   QString filename = QFileDialog::getOpenFileName(this, tr("Open Playlist"),
 						  "./",
 						  tr("Playlist (*.pls)"));
@@ -160,8 +158,6 @@ void	MainWindow::loadPlaylist()
   // load data in f
   while (!in.atEnd()) {
     line = in.readLine();
-    std::cout << line.toUtf8().constData() << std::endl;
-    std::cout.flush();
     nitem = new Media(line);
     _karaList.addItem(nitem);
     //newItem = new Media(static_cast<Media*>(item)->getPath());
