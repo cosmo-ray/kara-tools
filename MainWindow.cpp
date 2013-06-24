@@ -137,8 +137,8 @@ void	MainWindow::connector(void)
   /*check box*/
 
   /* mine */
-connect(&_find, SIGNAL(textEdited(QString)), this, SLOT(ctrlfedited(void)));
-connect(&_find2, SIGNAL(textEdited(QString)), this, SLOT(ctrlgedited(void)));
+  connect(&_find, SIGNAL(textEdited(QString)), this, SLOT(ctrlfedited(void)));
+  connect(&_find2, SIGNAL(textEdited(QString)), this, SLOT(ctrlgedited(void)));
 }
 
 void	MainWindow::loadPlaylist()
@@ -240,10 +240,10 @@ void	MainWindow::readEyecatchDirectory()
 bool	MainWindow::isVideo(const QString &str)
 {
   return (str.contains(".avi")
-      || str.contains(".mkv")
-      || str.contains(".flv")
-      || str.contains(".mp4")
-      || str.contains(".ogv"));
+	  || str.contains(".mkv")
+	  || str.contains(".flv")
+	  || str.contains(".mp4")
+	  || str.contains(".ogv"));
 }
 
 
@@ -353,7 +353,7 @@ void	MainWindow::addToPlaylist(QTreeWidgetItem *item)
       std::cout << "cant find " << pathAss.toLocal8Bit().constData() << std::endl;
       if (!access(changeExtansion(static_cast<Media*>(item)->getPath(), "frm").toLocal8Bit().constData(), 0))
 	genereASS(*static_cast<Media*>(item));
-	// try use OcamlScript
+      // try use OcamlScript
     }
   if (!_noDouble->isChecked())
     _karaList.addItem(newItem);
@@ -389,12 +389,12 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 	{
 	  _find.show();
 	  _find.setFocus();
-      hasCtlrFBeenPress = true;
+	  hasCtlrFBeenPress = true;
 	}
       else
 	{
 	  _find.hide();
-      hasCtlrFBeenPress = false;
+	  hasCtlrFBeenPress = false;
 	}
     }
   if ( (e->key() == Qt::Key_G) && QApplication::keyboardModifiers() && Qt::ControlModifier)
@@ -404,22 +404,22 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 	  _find2.show();
 	  _find2.setFocus();
 	  _ctrlg = -1;
-      hasCtlrGBeenPress = true;
+	  hasCtlrGBeenPress = true;
 	}
       else
 	{
 	  _find2.hide();
-      hasCtlrGBeenPress = false;
+	  hasCtlrGBeenPress = false;
 	}
     }
- if (e->key() == Qt::Key_Down ) {
-_ctrlg++;
-MainWindow::ctrlgedited();
-}
-if (e->key() == Qt::Key_Up && _ctrlg > 0) {
-_ctrlg--;
-MainWindow::ctrlgedited();
-}
+  if (e->key() == Qt::Key_Down ) {
+    _ctrlg++;
+    MainWindow::ctrlgedited();
+  }
+  if (e->key() == Qt::Key_Up && _ctrlg > 0) {
+    _ctrlg--;
+    MainWindow::ctrlgedited();
+  }
 }
 
 void  MainWindow::changePlayer(int i)
@@ -467,7 +467,7 @@ void MainWindow::start(void)
           listsKara += "\"";
           listsKara += _playerOpt;
         }
-         if (_endEyecatch->isChecked() && len)
+      if (_endEyecatch->isChecked() && len)
         {
           endlist += " ";
           endlist += "\"";
@@ -550,30 +550,30 @@ void MainWindow::changePlayerLocation(void)
 
 void MainWindow::ctrlfedited(void)
 {
-// std::cout << _find.text().toUtf8().constData() << std::endl;
-//QStringList sl = _find.text().split(" ");
-QList<QTreeWidgetItem *> iList = _FilesList.findItems(_find.text(), Qt::MatchContains);;
-int i;
- for (i = 0; i < _FilesList.topLevelItemCount(); i++)
+  // std::cout << _find.text().toUtf8().constData() << std::endl;
+  //QStringList sl = _find.text().split(" ");
+  QList<QTreeWidgetItem *> iList = _FilesList.findItems(_find.text(), Qt::MatchContains);;
+  int i;
+  for (i = 0; i < _FilesList.topLevelItemCount(); i++)
     {
-	_FilesList.topLevelItem(i)->setHidden(true);
+      _FilesList.topLevelItem(i)->setHidden(true);
     }
-for (i = 0; i < iList.size(); i++)
+  for (i = 0; i < iList.size(); i++)
     {
-	iList[i]->setHidden(false);
+      iList[i]->setHidden(false);
     }
 }
 
 
 void MainWindow::ctrlgedited(void)
 {
-// std::cout << _find2.text().toUtf8().constData() << std::endl;
-QList<QTreeWidgetItem *> iList = _FilesList.findItems(_find2.text(), Qt::MatchContains);
-if (iList.size() > 0) {
-if (_ctrlg < 0) _ctrlg = 0;
-if (_ctrlg >= iList.size()) _ctrlg = iList.size()-1;
+  // std::cout << _find2.text().toUtf8().constData() << std::endl;
+  QList<QTreeWidgetItem *> iList = _FilesList.findItems(_find2.text(), Qt::MatchContains);
+  if (iList.size() > 0) {
+    if (_ctrlg < 0) _ctrlg = 0;
+    if (_ctrlg >= iList.size()) _ctrlg = iList.size()-1;
     _FilesList.setCurrentItem(iList[_ctrlg]);
-}
+  }
 }
 
 void MainWindow::selectVLC(void)
