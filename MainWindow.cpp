@@ -6,10 +6,6 @@
 #include	<unistd.h>
 #include	<sstream>
 
-extern "C" {
-#include	<libavformat/avformat.h>
-}
-
 #ifdef	WIN32
 #include	<windows.h>
 #endif
@@ -34,7 +30,8 @@ MainWindow::MainWindow() : _vbox(this),
 			   _eyecatchDirectory("eyecatch"),
 			   _PlayerMenu("Player options"),
 			   _eyecatchMenu("eyecatch options"),
-			   _playMenu("play options")
+			   _playMenu("play options"),
+			   _decoderThread(*this)
 {
   QDesktopWidget *desktop = QApplication::desktop();
 
@@ -135,7 +132,7 @@ void	MainWindow::connector(void)
   connect(&_changeDirectory, SIGNAL(clicked(bool)), this, SLOT(changeDirectory(void)));
 
   connect(&_savePlaylistButton, SIGNAL(clicked(bool)), this, SLOT(savePlaylist(void)));
- connect(&_loadPlaylistButton, SIGNAL(clicked(bool)), this, SLOT(loadPlaylist(void)));
+  connect(&_loadPlaylistButton, SIGNAL(clicked(bool)), this, SLOT(loadPlaylist(void)));
 
   /*check box*/
 
@@ -185,6 +182,11 @@ void	MainWindow::savePlaylist()
   f.close();
 }
 
+QTreeWidget &MainWindow::getFileList()
+{
+  return (_FilesList);
+}
+
 void	MainWindow::readKaraDirectory()
 {
   QDir	dir(_karaDirectory);
@@ -198,33 +200,20 @@ void	MainWindow::readKaraDirectory()
 
   QStringList  filesName = dir.entryList();
   QStringList::const_iterator constIterator;
-  av_register_all();
 
   for (constIterator = filesName.constBegin(); constIterator != filesName.constEnd();
        ++constIterator)
     {
       if (isVideo(*constIterator))
 	{
-	  /*TODO: put this in thread, because it's very long.......*/
-
 	  QTreeWidgetItem* nitem = new Media((dir.path() + SLASH), *constIterator);
-	  AVFormatContext* pFormatCtx = avformat_alloc_context();
 	  static_cast<Media *>(nitem)->setDuration(-1);
-	  if (!avformat_open_input(&pFormatCtx, (_karaDirectory.replace('/', SLASH) + QString(SLASH) + (*constIterator)).toLocal8Bit().constData(), NULL, NULL))
-	    {
-	      avformat_find_stream_info(pFormatCtx, NULL);
-	      static_cast<Media *>(nitem)->setDuration(pFormatCtx->duration / AV_TIME_BASE);
-	      static_cast<Media *>(nitem)->setFps((float)pFormatCtx->streams[0]->r_frame_rate.num /
-						  (float)pFormatCtx->streams[0]->r_frame_rate.den);
-	      std::cout << static_cast<Media *>(nitem)->getFps() << std::endl;
-              std::cout << pFormatCtx->streams[0]->r_frame_rate.den << std::endl;
-	    }
-	  avformat_free_context(pFormatCtx);
 	  nitem->setText(0, ((Media *)nitem)->getName());
-	  nitem->setText(1, durationToString(static_cast<Media *>(nitem)->getDuration()));
 	  _FilesList.addTopLevelItem(nitem);
+	  nitem->setText(1, "loading");
 	}
     }
+  _decoderThread.start();
 }
 
 
