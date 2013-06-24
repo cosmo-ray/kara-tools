@@ -11,6 +11,10 @@ all:	$(NAME)
 $(NAME):	cmx
 	$(OCAMLOPT) $(CMX) $(MAIN) -o $(NAME)
 
+generateur:
+	$(OCAMLOPT) generatoy.ml -o generatoy
+
+
 cmx:
 	$(OCAMLOPT) $(SRC)
 
