@@ -1,11 +1,20 @@
 import Data.List.Split
 import System.IO
+import Text.Regex.Posix
+import System.Environment
+import Filesystem.Path
+import Filesystem.Path.CurrentOS
+import Data.Text (pack)
 
-decompose l = let l2 = splitOn "," l in (((splitOn ":" $ l2!!0)!!0), l2!!1, foldr (++) "" (drop 9 l2))
+modifext s e = let fp = decodeString s in let nfp = replaceExtension fp (Data.Text.pack e) in encodeString nfp
+
+m = "[0-9a-zA-Z ]*"
+
+matchregex s = s =~ ("^Dialogue: [0-9]*,[0-9]*:[0-9]*:[0-9]*.[0-9]*,[0-9]*:[0-9]*:[0-9]*.[0-9]*,"++m++","++m++",[0-9]*,[0-9]*,[0-9]*,"++m++",") :: String
+
+decompose l = let a = matchregex l in if a == [] then (False, [], []) else let l2 = splitOn "," a in (True, l2!!1, drop (length a) l)
 
 toCentisecondes s = let l = splitOn ":" s in let l2 = splitOn "." (l!!2) in let [a,b,c,d] = map (\x -> read x :: Int) [l!!0,l!!1,l2!!0,l2!!1] in d + c * 100 + b * 6000 + a * 360000
-
-lineok l = (splitOn ":" $ (splitOn "," l)!!0)!!0 == "Dialogue"
 
 isnum x = elem x "0123456789"
 
@@ -16,34 +25,38 @@ aux l t = case l of
       (n,""):xs -> aux xs (t+n)
       (n,z):xs  -> [(t,t+n,z)] ++ (aux xs (t+n))
 
-extractlyr p = foldr (\(u,v,x) -> \y -> "&" ++ x ++ y) "" p
+conv :: Float -> Int -> Int
+conv fps x = let y = (fromIntegral x) in floor (0.5+y*fps/100)
 
-extractfrm p = foldr (\(u,v,x) -> \y -> show u ++ " " ++ show v ++ "\n" ++ y) "" p
+extractboth fps p = foldr (\(u,v,x) -> \(y,z) -> (("&" ++ x ++ y),(show (conv fps u) ++ " " ++ show (conv fps v) ++ "\n" ++ z))) ("","") p
 
-extractboth p = foldr (\(u,v,x) -> \(y,z) -> (("&" ++ x ++ y),(show u ++ " " ++ show v ++ "\n" ++ z))) ("","") p
-
-main0 s = let (a,b,c) = decompose s in let t = toCentisecondes b in let e = separe c in let p = aux e t in p
+main1 s = let (a,b,c) = decompose s in if a then let t = toCentisecondes b in let e = separe c in let p = aux e t in Just p else Nothing
 
 main :: IO ()
 main = do 
-       inh <- openFile "b.ass" ReadMode
-       outh <- openFile "output.txt" WriteMode
-       outh2 <- openFile "output2.txt" WriteMode
-       mainloop inh outh outh2
-       hClose inh
-       hClose outh
-       hClose outh2
+       args <- getArgs
+       case args of
+             x:y:[]-> do
+                      inh <- openFile x ReadMode
+                      outh <- openFile (modifext x "frm") WriteMode
+                      outh2 <- openFile (modifext x "lyr") WriteMode
+                      mainloop inh outh outh2 (read y :: Float)
+                      hClose inh
+                      hClose outh
+                      hClose outh2
+             _ -> putStrLn "Please specify an input file name and a fps"
 
-
-mainloop :: Handle -> Handle -> Handle -> IO ()
-mainloop inh outh outh2 = 
+mainloop ::  Handle -> Handle -> Handle -> Float -> IO ()
+mainloop inh outh outh2 fps = 
     do ineof <- hIsEOF inh
        if ineof
            then return ()
-           else do p <- fmap main0 (hGetLine inh)
-                   let (p1,p2) = extractboth p
-                   hPutStrLn outh (init p2)
-                   hPutStrLn outh2 (p1)
-                   mainloop inh outh outh2
+           else do p <- fmap main1 (hGetLine inh)
+                   case p of
+                        Just r ->let (p1,p2) = extractboth fps r in do
+                                     hPutStrLn outh (init p2)
+                                     hPutStrLn outh2 (p1)
+                        Nothing -> return ()
+                   mainloop inh outh outh2 fps
 
 
