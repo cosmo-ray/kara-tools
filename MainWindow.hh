@@ -18,6 +18,7 @@
 #include <QSplitter>
 #include <QTreeWidget>
 #include <QProcess>
+#include <QLabel>
 #include "core.hh"
 #include "Media.hh"
 #include "DecoderThread.hh"
@@ -34,6 +35,11 @@ private:
 
   QVBoxLayout _vbox;
   QSplitter   _splitter;
+  QWidget     _karaListInfo; 
+  QVBoxLayout _RightLayout;
+  QHBoxLayout _karaListInfoLayout;
+  int64_t     _playlistDuration;
+  QLabel      _lengthTime;
   QMenuBar    _menuBar;
   QListWidget _karaList;
   QTreeWidget _FilesList;

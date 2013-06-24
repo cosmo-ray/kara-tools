@@ -21,6 +21,8 @@ const char	*confTab[] = {
 };
 
 MainWindow::MainWindow() : _vbox(this),
+			   _playlistDuration(0),
+			   _lengthTime("duration: 0m00"),
 			   _start("start"),
 			   _shufle("shuffle"),
 			   _pick("pick"),
@@ -47,8 +49,17 @@ MainWindow::MainWindow() : _vbox(this),
   ColumnNames << "karaoke name" << "lenght" << "saki";
   _FilesList.setHeaderLabels(ColumnNames);
   _FilesList.setColumnWidth( 0, 500 );
+
+
   _splitter.addWidget(&_FilesList);
-  _splitter.addWidget(&_karaList);
+  _splitter.addWidget(&_karaListInfo);
+
+  _karaListInfo.setLayout(&_RightLayout);
+
+  _karaListInfoLayout.addWidget(&_lengthTime);
+
+  _RightLayout.addLayout(&_karaListInfoLayout);
+  _RightLayout.addWidget(&_karaList);
 
   _hbox2ndOptions.addWidget(&_changeDirectory);
   _hbox2ndOptions.addWidget(&_clearPlaylist);
@@ -149,14 +160,14 @@ void	MainWindow::loadPlaylist()
   QFile f(filename);
   f.open(QIODevice::ReadOnly | QIODevice::Text);
   QTextStream in(&f);
-  QListWidgetItem* nitem;
+  Media* nitem;
   QString line;
   std::cout << filename.toUtf8().constData();
   // load data in f
   while (!in.atEnd()) {
     line = in.readLine();
     nitem = new Media(line);
-    _karaList.addItem(nitem);
+    addToPlaylist(static_cast<QTreeWidgetItem *>(nitem));
     //newItem = new Media(static_cast<Media*>(item)->getPath());
     //String line = in.readLine();
   }
@@ -346,7 +357,7 @@ void	MainWindow::saveConfig()
 
 void	MainWindow::addToPlaylist(QTreeWidgetItem *item)
 {
-  QListWidgetItem* newItem = new Media(static_cast<Media*>(item)->getPath());
+  QListWidgetItem* newItem = new Media(static_cast<Media&>(*item));
   QString pathAss = changeExtansion(static_cast<Media*>(item)->getPath(), "ass");
   if (access(pathAss.toLocal8Bit().constData(), 0))
     {
@@ -356,11 +367,19 @@ void	MainWindow::addToPlaylist(QTreeWidgetItem *item)
       // try use OcamlScript
     }
   if (!_noDouble->isChecked())
-    _karaList.addItem(newItem);
+    {
+      _karaList.addItem(newItem);
+      _playlistDuration += static_cast<Media*>(item)->getDuration();
+      _lengthTime.setText("duration: " + durationToString(_playlistDuration));
+    }
   else
     {
       if (_karaList.findItems(static_cast<Media*>(item)->getName(), Qt::MatchCaseSensitive).empty())
-	_karaList.addItem(newItem);
+	{
+	  _karaList.addItem(newItem);
+	  _playlistDuration += static_cast<Media*>(item)->getDuration();
+	  _lengthTime.setText("duration: " + durationToString(_playlistDuration));
+	}
       else
 	delete newItem;
     }
@@ -369,9 +388,13 @@ void	MainWindow::addToPlaylist(QTreeWidgetItem *item)
 
 /*Kara list slots*/
 
-void	MainWindow::rmItemFromKaraList(QListWidgetItem *)
+void	MainWindow::rmItemFromKaraList(QListWidgetItem *litem)
+
 {
-  delete _karaList.takeItem(_karaList.currentRow());
+  Media *item = static_cast<Media*>(litem);
+  _playlistDuration -= item->getDuration();
+  _lengthTime.setText("duration: " + durationToString(_playlistDuration));
+  delete item;
 }
 
 
@@ -502,7 +525,7 @@ void MainWindow::shufle(void)
 
   QListWidgetItem *tmp;
 
-  while (i < len)
+  while (i < (len * 2))
     {
       tmp = _karaList.takeItem(rand() % len);
       _karaList.insertItem(rand() % (len - 1), tmp);
@@ -521,7 +544,11 @@ void MainWindow::pick(void)
 
 void MainWindow::clearPlaylist(void)
 {
-  while(_karaList.takeItem(0));
+  QListWidgetItem *litem;
+  while((litem = _karaList.item(0)) != NULL)
+    {
+      rmItemFromKaraList(litem);
+    }
 }
 
 void MainWindow::changeDirectory(void)
