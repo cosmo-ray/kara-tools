@@ -26,8 +26,10 @@ DEPENDPATH += $$PWD/include
 SOURCES += main.cpp\
         mainwindow.cpp\
         Media.cpp\
+        DecoderThread.cpp\
         core.cpp
 
-HEADERS  += mainwindow.hh \
-            Media.hh \
+HEADERS  += mainwindow.hh\
+            Media.hh\
+            DecoderThread.hh\
             core.hh

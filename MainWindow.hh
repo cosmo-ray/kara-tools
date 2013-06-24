@@ -20,6 +20,7 @@
 #include <QProcess>
 #include "core.hh"
 #include "Media.hh"
+#include "DecoderThread.hh"
 
 class	MainWindow : public QWidget
 {
@@ -28,6 +29,7 @@ public:
   ~MainWindow();
   MainWindow();
   
+  QTreeWidget &getFileList();
 private:
 
   QVBoxLayout _vbox;
@@ -62,6 +64,7 @@ private:
   QAction     *_beginEyecatch;
   QAction     *_endEyecatch;
   QAction     *_noDouble;
+  DecoderThread     _decoderThread;
 
   enum Conf
     {
