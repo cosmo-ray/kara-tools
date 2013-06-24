@@ -11,6 +11,10 @@
 #endif
 #include	"MainWindow.hh"
 
+extern "C" {
+#include	<libavformat/avformat.h>
+}
+
 const char	*confTab[] = {
   "eyecatch_begin",
   "eyecatch_end",
@@ -167,6 +171,17 @@ void	MainWindow::loadPlaylist()
   while (!in.atEnd()) {
     line = in.readLine();
     nitem = new Media(line);
+////////////// start of copypaste
+ AVFormatContext* pFormatCtx = avformat_alloc_context();
+      if (!avformat_open_input(&pFormatCtx, static_cast<Media *>(nitem)->getPath().toLocal8Bit().constData(), NULL, NULL))
+	{
+	  avformat_find_stream_info(pFormatCtx, NULL);
+	  static_cast<Media *>(nitem)->setDuration(pFormatCtx->duration / AV_TIME_BASE);
+	  static_cast<Media *>(nitem)->setFps((float)pFormatCtx->streams[0]->r_frame_rate.num /
+					      (float)pFormatCtx->streams[0]->r_frame_rate.den);
+	}
+      avformat_free_context(pFormatCtx);
+////////////// end of copypaste
     addToPlaylist(static_cast<QTreeWidgetItem *>(nitem));
     //newItem = new Media(static_cast<Media*>(item)->getPath());
     //String line = in.readLine();
