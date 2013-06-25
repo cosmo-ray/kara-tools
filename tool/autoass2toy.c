@@ -10,30 +10,8 @@ void main(int argc, char **argv) {
   int lastdot = -1;
   char fpsstring[50];
   char ass[500];
-  char as1[500];
-  char as2[500];
-  as1[0]='.';
-  as1[1]='/';
-  as1[2]='a';
-  as1[3]='s';
-  as1[4]='s';
-  as1[5]='2';
-  as1[6]='t';
-  as1[7]='o';
-  as1[8]='y';
-  as1[9]=' ';
-  as2[0]='.';
-  as2[1]='/';
-  as2[2]='g';
-  as2[3]='e';
-  as2[4]='n';
-  as2[5]='e';
-  as2[6]='r';
-  as2[7]='a';
-  as2[8]='t';
-  as2[9]='o';
-  as2[10]='y';
-  as2[11]=' ';
+  char as1[500] = "./ass2toy ";
+  char as2[500] = "./generatoy ";
   strcpy(ass,argv[1]);
   for(i = 0;ass[i]!='\0'; ++i)
 	if (ass[i]=='.')
