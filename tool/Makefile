@@ -1,6 +1,6 @@
 NAME=	toy2ass
-MAIN=	toy2assConverter.ml
-SRC=	toy2ass.ml
+SRC=	toy2ass.ml\
+	toy2assConverter.ml
 CMX=	$(SRC:.ml=.cmx)
 OBJ=	$(SRC:.ml=.o)
 
@@ -9,7 +9,7 @@ OCAMLOPT= ocamlopt
 all:	$(NAME)
 
 $(NAME):	cmx
-	$(OCAMLOPT) $(CMX) $(MAIN) -o $(NAME)
+	$(OCAMLOPT) $(CMX) -o $(NAME)
 
 generateur:
 	$(OCAMLOPT) generatoy.ml -o generatoy

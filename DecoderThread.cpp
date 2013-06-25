@@ -17,11 +17,13 @@ DecoderThread::~DecoderThread()
 
 void DecoderThread::run()
 {
+  AVFormatContext* pFormatCtx;
+
   for (int i = 0; i < _mainWindow.getFileList().topLevelItemCount(); ++i)
     {
+      pFormatCtx = avformat_alloc_context();
       QTreeWidgetItem* nitem = _mainWindow.getFileList().topLevelItem(i);
 
-      AVFormatContext* pFormatCtx = avformat_alloc_context();
       if (!avformat_open_input(&pFormatCtx, static_cast<Media *>(nitem)->getPath().toLocal8Bit().constData(), NULL, NULL))
 	{
 	  avformat_find_stream_info(pFormatCtx, NULL);
