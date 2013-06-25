@@ -7,6 +7,14 @@
   int	frameRate;
 */
 
+Media::Media(const Media &other)
+  : QListWidgetItem(QFileInfo(other._path).completeBaseName()),
+    _path(other._path),
+    _duration(other._duration),
+    _fps(other._fps)
+{
+}
+
 Media::Media(const QString &dirPath, const QString &name)
   : QListWidgetItem(QFileInfo(name).completeBaseName()), _path(dirPath + name), _duration(-1), _fps(0)
 {

@@ -6,14 +6,14 @@
 #include	<unistd.h>
 #include	<sstream>
 
-extern "C" {
-#include	<libavformat/avformat.h>
-}
-
 #ifdef	WIN32
 #include	<windows.h>
 #endif
 #include	"MainWindow.hh"
+
+extern "C" {
+#include	<libavformat/avformat.h>
+}
 
 const char	*confTab[] = {
   "eyecatch_begin",
@@ -25,6 +25,8 @@ const char	*confTab[] = {
 };
 
 MainWindow::MainWindow() : _vbox(this),
+			   _playlistDuration(0),
+			   _lengthTime("duration: 0m00"),
 			   _start("start"),
 			   _shufle("shuffle"),
 			   _pick("pick"),
@@ -34,7 +36,8 @@ MainWindow::MainWindow() : _vbox(this),
 			   _eyecatchDirectory("eyecatch"),
 			   _PlayerMenu("Player options"),
 			   _eyecatchMenu("eyecatch options"),
-			   _playMenu("play options")
+			   _playMenu("play options"),
+			   _decoderThread(*this)
 {
   QDesktopWidget *desktop = QApplication::desktop();
 
@@ -50,8 +53,17 @@ MainWindow::MainWindow() : _vbox(this),
   ColumnNames << "karaoke name" << "lenght" << "saki";
   _FilesList.setHeaderLabels(ColumnNames);
   _FilesList.setColumnWidth( 0, 500 );
+
+
   _splitter.addWidget(&_FilesList);
-  _splitter.addWidget(&_karaList);
+  _splitter.addWidget(&_karaListInfo);
+
+  _karaListInfo.setLayout(&_RightLayout);
+
+  _karaListInfoLayout.addWidget(&_lengthTime);
+
+  _RightLayout.addLayout(&_karaListInfoLayout);
+  _RightLayout.addWidget(&_karaList);
 
   _hbox2ndOptions.addWidget(&_changeDirectory);
   _hbox2ndOptions.addWidget(&_clearPlaylist);
@@ -132,13 +144,13 @@ void	MainWindow::connector(void)
   connect(&_changeDirectory, SIGNAL(clicked(bool)), this, SLOT(changeDirectory(void)));
 
   connect(&_savePlaylistButton, SIGNAL(clicked(bool)), this, SLOT(savePlaylist(void)));
- connect(&_loadPlaylistButton, SIGNAL(clicked(bool)), this, SLOT(loadPlaylist(void)));
+  connect(&_loadPlaylistButton, SIGNAL(clicked(bool)), this, SLOT(loadPlaylist(void)));
 
   /*check box*/
 
   /* mine */
-connect(&_find, SIGNAL(textEdited(QString)), this, SLOT(ctrlfedited(void)));
-connect(&_find2, SIGNAL(textEdited(QString)), this, SLOT(ctrlgedited(void)));
+  connect(&_find, SIGNAL(textEdited(QString)), this, SLOT(ctrlfedited(void)));
+  connect(&_find2, SIGNAL(textEdited(QString)), this, SLOT(ctrlgedited(void)));
 }
 
 void	MainWindow::loadPlaylist()
@@ -149,14 +161,25 @@ void	MainWindow::loadPlaylist()
   QFile f(filename);
   f.open(QIODevice::ReadOnly | QIODevice::Text);
   QTextStream in(&f);
-  QListWidgetItem* nitem;
+  Media* nitem;
   QString line;
   std::cout << filename.toUtf8().constData();
   // load data in f
   while (!in.atEnd()) {
     line = in.readLine();
     nitem = new Media(line);
-    _karaList.addItem(nitem);
+////////////// start of copypaste
+ AVFormatContext* pFormatCtx = avformat_alloc_context();
+      if (!avformat_open_input(&pFormatCtx, static_cast<Media *>(nitem)->getPath().toLocal8Bit().constData(), NULL, NULL))
+	{
+	  avformat_find_stream_info(pFormatCtx, NULL);
+	  static_cast<Media *>(nitem)->setDuration(pFormatCtx->duration / AV_TIME_BASE);
+	  static_cast<Media *>(nitem)->setFps((float)pFormatCtx->streams[0]->r_frame_rate.num /
+					      (float)pFormatCtx->streams[0]->r_frame_rate.den);
+	}
+      avformat_free_context(pFormatCtx);
+////////////// end of copypaste
+    addToPlaylist(static_cast<QTreeWidgetItem *>(nitem));
     //newItem = new Media(static_cast<Media*>(item)->getPath());
     //String line = in.readLine();
   }
@@ -182,6 +205,11 @@ void	MainWindow::savePlaylist()
   f.close();
 }
 
+QTreeWidget &MainWindow::getFileList()
+{
+  return (_FilesList);
+}
+
 void	MainWindow::readKaraDirectory()
 {
   QDir	dir(_karaDirectory);
@@ -195,33 +223,20 @@ void	MainWindow::readKaraDirectory()
 
   QStringList  filesName = dir.entryList();
   QStringList::const_iterator constIterator;
-  av_register_all();
 
   for (constIterator = filesName.constBegin(); constIterator != filesName.constEnd();
        ++constIterator)
     {
       if (isVideo(*constIterator))
 	{
-	  /*TODO: put this in thread, because it's very long.......*/
-
 	  QTreeWidgetItem* nitem = new Media((dir.path() + SLASH), *constIterator);
-	  AVFormatContext* pFormatCtx = avformat_alloc_context();
 	  static_cast<Media *>(nitem)->setDuration(-1);
-	  if (!avformat_open_input(&pFormatCtx, (_karaDirectory.replace('/', SLASH) + QString(SLASH) + (*constIterator)).toLocal8Bit().constData(), NULL, NULL))
-	    {
-	      avformat_find_stream_info(pFormatCtx, NULL);
-	      static_cast<Media *>(nitem)->setDuration(pFormatCtx->duration / AV_TIME_BASE);
-	      static_cast<Media *>(nitem)->setFps((float)pFormatCtx->streams[0]->r_frame_rate.num /
-						  (float)pFormatCtx->streams[0]->r_frame_rate.den);
-	      std::cout << static_cast<Media *>(nitem)->getFps() << std::endl;
-              std::cout << pFormatCtx->streams[0]->r_frame_rate.den << std::endl;
-	    }
-	  avformat_free_context(pFormatCtx);
 	  nitem->setText(0, ((Media *)nitem)->getName());
-	  nitem->setText(1, durationToString(static_cast<Media *>(nitem)->getDuration()));
 	  _FilesList.addTopLevelItem(nitem);
+	  nitem->setText(1, "loading");
 	}
     }
+  _decoderThread.start();
 }
 
 
@@ -248,10 +263,10 @@ void	MainWindow::readEyecatchDirectory()
 bool	MainWindow::isVideo(const QString &str)
 {
   return (str.contains(".avi")
-      || str.contains(".mkv")
-      || str.contains(".flv")
-      || str.contains(".mp4")
-      || str.contains(".ogv"));
+	  || str.contains(".mkv")
+	  || str.contains(".flv")
+	  || str.contains(".mp4")
+	  || str.contains(".ogv"));
 }
 
 
@@ -354,21 +369,29 @@ void	MainWindow::saveConfig()
 
 void	MainWindow::addToPlaylist(QTreeWidgetItem *item)
 {
-  QListWidgetItem* newItem = new Media(static_cast<Media*>(item)->getPath());
+  QListWidgetItem* newItem = new Media(static_cast<Media&>(*item));
   QString pathAss = changeExtansion(static_cast<Media*>(item)->getPath(), "ass");
   if (access(pathAss.toLocal8Bit().constData(), 0))
     {
       std::cout << "cant find " << pathAss.toLocal8Bit().constData() << std::endl;
       if (!access(changeExtansion(static_cast<Media*>(item)->getPath(), "frm").toLocal8Bit().constData(), 0))
 	genereASS(*static_cast<Media*>(item));
-	// try use OcamlScript
+      // try use OcamlScript
     }
   if (!_noDouble->isChecked())
-    _karaList.addItem(newItem);
+    {
+      _karaList.addItem(newItem);
+      _playlistDuration += static_cast<Media*>(item)->getDuration();
+      _lengthTime.setText("duration: " + durationToString(_playlistDuration));
+    }
   else
     {
       if (_karaList.findItems(static_cast<Media*>(item)->getName(), Qt::MatchCaseSensitive).empty())
-	_karaList.addItem(newItem);
+	{
+	  _karaList.addItem(newItem);
+	  _playlistDuration += static_cast<Media*>(item)->getDuration();
+	  _lengthTime.setText("duration: " + durationToString(_playlistDuration));
+	}
       else
 	delete newItem;
     }
@@ -377,9 +400,13 @@ void	MainWindow::addToPlaylist(QTreeWidgetItem *item)
 
 /*Kara list slots*/
 
-void	MainWindow::rmItemFromKaraList(QListWidgetItem *)
+void	MainWindow::rmItemFromKaraList(QListWidgetItem *litem)
+
 {
-  delete _karaList.takeItem(_karaList.currentRow());
+  Media *item = static_cast<Media*>(litem);
+  _playlistDuration -= item->getDuration();
+  _lengthTime.setText("duration: " + durationToString(_playlistDuration));
+  delete item;
 }
 
 
@@ -397,12 +424,12 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 	{
 	  _find.show();
 	  _find.setFocus();
-      hasCtlrFBeenPress = true;
+	  hasCtlrFBeenPress = true;
 	}
       else
 	{
 	  _find.hide();
-      hasCtlrFBeenPress = false;
+	  hasCtlrFBeenPress = false;
 	}
     }
   if ( (e->key() == Qt::Key_G) && QApplication::keyboardModifiers() && Qt::ControlModifier)
@@ -412,22 +439,22 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 	  _find2.show();
 	  _find2.setFocus();
 	  _ctrlg = -1;
-      hasCtlrGBeenPress = true;
+	  hasCtlrGBeenPress = true;
 	}
       else
 	{
 	  _find2.hide();
-      hasCtlrGBeenPress = false;
+	  hasCtlrGBeenPress = false;
 	}
     }
- if (e->key() == Qt::Key_Down ) {
-_ctrlg++;
-MainWindow::ctrlgedited();
-}
-if (e->key() == Qt::Key_Up && _ctrlg > 0) {
-_ctrlg--;
-MainWindow::ctrlgedited();
-}
+  if (e->key() == Qt::Key_Down ) {
+    _ctrlg++;
+    MainWindow::ctrlgedited();
+  }
+  if (e->key() == Qt::Key_Up && _ctrlg > 0) {
+    _ctrlg--;
+    MainWindow::ctrlgedited();
+  }
 }
 
 void  MainWindow::changePlayer(int i)
@@ -475,7 +502,7 @@ void MainWindow::start(void)
           listsKara += "\"";
           listsKara += _playerOpt;
         }
-         if (_endEyecatch->isChecked() && len)
+      if (_endEyecatch->isChecked() && len)
         {
           endlist += " ";
           endlist += "\"";
@@ -510,7 +537,7 @@ void MainWindow::shufle(void)
 
   QListWidgetItem *tmp;
 
-  while (i < len)
+  while (i < (len * 2))
     {
       tmp = _karaList.takeItem(rand() % len);
       _karaList.insertItem(rand() % (len - 1), tmp);
@@ -529,7 +556,11 @@ void MainWindow::pick(void)
 
 void MainWindow::clearPlaylist(void)
 {
-  while(_karaList.takeItem(0));
+  QListWidgetItem *litem;
+  while((litem = _karaList.item(0)) != NULL)
+    {
+      rmItemFromKaraList(litem);
+    }
 }
 
 void MainWindow::changeDirectory(void)
@@ -558,30 +589,30 @@ void MainWindow::changePlayerLocation(void)
 
 void MainWindow::ctrlfedited(void)
 {
-// std::cout << _find.text().toUtf8().constData() << std::endl;
-//QStringList sl = _find.text().split(" ");
-QList<QTreeWidgetItem *> iList = _FilesList.findItems(_find.text(), Qt::MatchContains);;
-int i;
- for (i = 0; i < _FilesList.topLevelItemCount(); i++)
+  // std::cout << _find.text().toUtf8().constData() << std::endl;
+  //QStringList sl = _find.text().split(" ");
+  QList<QTreeWidgetItem *> iList = _FilesList.findItems(_find.text(), Qt::MatchContains);;
+  int i;
+  for (i = 0; i < _FilesList.topLevelItemCount(); i++)
     {
-	_FilesList.topLevelItem(i)->setHidden(true);
+      _FilesList.topLevelItem(i)->setHidden(true);
     }
-for (i = 0; i < iList.size(); i++)
+  for (i = 0; i < iList.size(); i++)
     {
-	iList[i]->setHidden(false);
+      iList[i]->setHidden(false);
     }
 }
 
 
 void MainWindow::ctrlgedited(void)
 {
-// std::cout << _find2.text().toUtf8().constData() << std::endl;
-QList<QTreeWidgetItem *> iList = _FilesList.findItems(_find2.text(), Qt::MatchContains);
-if (iList.size() > 0) {
-if (_ctrlg < 0) _ctrlg = 0;
-if (_ctrlg >= iList.size()) _ctrlg = iList.size()-1;
+  // std::cout << _find2.text().toUtf8().constData() << std::endl;
+  QList<QTreeWidgetItem *> iList = _FilesList.findItems(_find2.text(), Qt::MatchContains);
+  if (iList.size() > 0) {
+    if (_ctrlg < 0) _ctrlg = 0;
+    if (_ctrlg >= iList.size()) _ctrlg = iList.size()-1;
     _FilesList.setCurrentItem(iList[_ctrlg]);
-}
+  }
 }
 
 void MainWindow::selectVLC(void)
