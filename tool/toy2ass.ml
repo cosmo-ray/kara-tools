@@ -54,12 +54,18 @@ let toy2ass lyrFile frmFile fps =
   List.map (fun (a,b)->phrase2string b a fps) mix
 ;;
 
+let getStyle () =
+  if (Sys.file_exists "./style.txt") then
+    file2list "./style.txt"
+  else
+    ["[V4+ Styles]";
+     "Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding";
+     "Style: Default,Arial,20,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,2,8,10,10,10,1";
+     "";
+    ]
+
 let assHeader =
-["[V4+ Styles]";
-"Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding";
-"Style: Default,Arial,20,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,2,8,10,10,10,1";
-"";
-"[Events]";
+(getStyle ())@["[Events]";
 "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text"];;
 
 let writefile f l = let a = open_out f in List.iter (fun x->output_string a (x^"\n")) l;close_out a;;
