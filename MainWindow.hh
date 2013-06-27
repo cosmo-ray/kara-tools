@@ -103,7 +103,7 @@ private slots:
   void genereASS(const Media &media) const;
 
   /*Files list slots*/
-  void addToPlaylist(QTreeWidgetItem *);
+  bool addToPlaylist(QTreeWidgetItem *);
   
   /*Kara list slots*/
   void rmItemFromKaraList(QListWidgetItem *);

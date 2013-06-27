@@ -169,17 +169,17 @@ void	MainWindow::loadPlaylist()
     line = in.readLine();
     nitem = new Media(line);
 ////////////// start of copypaste
- AVFormatContext* pFormatCtx = avformat_alloc_context();
-      if (!avformat_open_input(&pFormatCtx, static_cast<Media *>(nitem)->getPath().toLocal8Bit().constData(), NULL, NULL))
-	{
-	  avformat_find_stream_info(pFormatCtx, NULL);
+    AVFormatContext* pFormatCtx = avformat_alloc_context();
+    if (!avformat_open_input(&pFormatCtx, static_cast<Media *>(nitem)->getPath().toLocal8Bit().constData(), NULL, NULL))
+      {
+	avformat_find_stream_info(pFormatCtx, NULL);
 	  static_cast<Media *>(nitem)->setDuration(pFormatCtx->duration / AV_TIME_BASE);
 	  static_cast<Media *>(nitem)->setFps((float)pFormatCtx->streams[0]->r_frame_rate.num /
 					      (float)pFormatCtx->streams[0]->r_frame_rate.den);
-	}
+      }
       avformat_free_context(pFormatCtx);
-////////////// end of copypaste
-    addToPlaylist(static_cast<QTreeWidgetItem *>(nitem));
+      ////////////// end of copypaste
+      addToPlaylist(static_cast<QTreeWidgetItem *>(nitem));
     //newItem = new Media(static_cast<Media*>(item)->getPath());
     //String line = in.readLine();
   }
@@ -367,7 +367,7 @@ void	MainWindow::saveConfig()
 
 /*Files list slots*/
 
-void	MainWindow::addToPlaylist(QTreeWidgetItem *item)
+bool	MainWindow::addToPlaylist(QTreeWidgetItem *item)
 {
   QListWidgetItem* newItem = new Media(static_cast<Media&>(*item));
   QString pathAss = changeExtansion(static_cast<Media*>(item)->getPath(), "ass");
@@ -383,6 +383,7 @@ void	MainWindow::addToPlaylist(QTreeWidgetItem *item)
       _karaList.addItem(newItem);
       _playlistDuration += static_cast<Media*>(item)->getDuration();
       _lengthTime.setText("duration: " + durationToString(_playlistDuration));
+      return (true);
     }
   else
     {
@@ -391,9 +392,11 @@ void	MainWindow::addToPlaylist(QTreeWidgetItem *item)
 	  _karaList.addItem(newItem);
 	  _playlistDuration += static_cast<Media*>(item)->getDuration();
 	  _lengthTime.setText("duration: " + durationToString(_playlistDuration));
+	  return (true);
 	}
       else
 	delete newItem;
+      return (false);
     }
 }
 
@@ -548,10 +551,10 @@ void MainWindow::shufle(void)
 void MainWindow::pick(void)
 {
   int	len = _FilesList.topLevelItemCount();
-  if (!len)
+  int	karaListLen = _karaList.count();
+  if ((len - karaListLen) <= 0)
     return;
-  addToPlaylist(static_cast<Media *>(_FilesList.topLevelItem(rand() % len)));
-
+  while (!addToPlaylist(static_cast<Media *>(_FilesList.topLevelItem(rand() % len))));
 }
 
 void MainWindow::clearPlaylist(void)
