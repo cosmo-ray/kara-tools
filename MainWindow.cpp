@@ -50,7 +50,7 @@ MainWindow::MainWindow() : _vbox(this),
  
   _FilesList.setColumnCount(3);
   QStringList ColumnNames;
-  ColumnNames << "karaoke name" << "lenght" << "saki";
+  ColumnNames << "karaoke name" << "lenght" << "nbr";
   _FilesList.setHeaderLabels(ColumnNames);
   _FilesList.setColumnWidth( 0, 500 );
 
@@ -223,6 +223,7 @@ void	MainWindow::readKaraDirectory()
 
   QStringList  filesName = dir.entryList();
   QStringList::const_iterator constIterator;
+  int	i = 0;
 
   for (constIterator = filesName.constBegin(); constIterator != filesName.constEnd();
        ++constIterator)
@@ -232,8 +233,10 @@ void	MainWindow::readKaraDirectory()
 	  QTreeWidgetItem* nitem = new Media((dir.path() + SLASH), *constIterator);
 	  static_cast<Media *>(nitem)->setDuration(-1);
 	  nitem->setText(0, ((Media *)nitem)->getName());
-	  _FilesList.addTopLevelItem(nitem);
 	  nitem->setText(1, "loading");
+	  nitem->setText(2, QString::number(i));
+	  _FilesList.addTopLevelItem(nitem);
+	  ++i;
 	}
     }
   _decoderThread.start();
@@ -280,6 +283,7 @@ void MainWindow::genereASS(const Media &media) const
   ss << media.getFps();
   args << QString::fromStdString(ss.str());
   p->execute("tool/toy2ass",args);
+  delete p;
 }
 
 MainWindow::Conf  MainWindow::getConfTabIdx(const QString &str)
