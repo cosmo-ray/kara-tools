@@ -53,7 +53,7 @@ MainWindow::MainWindow() : _vbox(this),
   ColumnNames << "karaoke name" << "lenght" << "nbr";
   _FilesList.setHeaderLabels(ColumnNames);
   _FilesList.setColumnWidth( 0, 500 );
-
+  _FilesList.setRootIsDecorated(false);
 
   _splitter.addWidget(&_FilesList);
   _splitter.addWidget(&_karaListInfo);
@@ -234,7 +234,7 @@ void	MainWindow::readKaraDirectory()
 	  static_cast<Media *>(nitem)->setDuration(-1);
 	  nitem->setText(0, ((Media *)nitem)->getName());
 	  nitem->setText(1, "loading");
-	  nitem->setText(2, QString::number(i));
+	  nitem->setText(2, QString::number(i + 1));
 	  _FilesList.addTopLevelItem(nitem);
 	  ++i;
 	}
