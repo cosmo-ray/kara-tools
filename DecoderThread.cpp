@@ -18,10 +18,10 @@ DecoderThread::~DecoderThread()
 void DecoderThread::run()
 {
   AVFormatContext* pFormatCtx;
+  pFormatCtx = avformat_alloc_context();
 
   for (int i = 0; i < _mainWindow.getFileList().topLevelItemCount(); ++i)
     {
-      pFormatCtx = avformat_alloc_context();
       QTreeWidgetItem* nitem = _mainWindow.getFileList().topLevelItem(i);
 
       if (!avformat_open_input(&pFormatCtx, static_cast<Media *>(nitem)->getPath().toLocal8Bit().constData(), NULL, NULL))
@@ -34,8 +34,9 @@ void DecoderThread::run()
 	  std::cout << pFormatCtx->streams[0]->r_frame_rate.den << std::endl;
 
 	  nitem->setText(1, durationToString(static_cast<Media *>(nitem)->getDuration()));
+	  avformat_close_input (&pFormatCtx);
 	}
-      avformat_free_context(pFormatCtx);
     }
+  avformat_free_context(pFormatCtx);
   return ;
 }
