@@ -26,7 +26,8 @@ void DecoderThread::run()
 
       if (!avformat_open_input(&pFormatCtx, static_cast<Media *>(nitem)->getPath().toLocal8Bit().constData(), NULL, NULL))
 	{
-	  avformat_find_stream_info(pFormatCtx, NULL);
+	  if (pFormatCtx->duration < 0)
+	    avformat_find_stream_info(pFormatCtx, NULL);
 	  static_cast<Media *>(nitem)->setDuration(pFormatCtx->duration / AV_TIME_BASE);
 	  static_cast<Media *>(nitem)->setFps((float)pFormatCtx->streams[0]->r_frame_rate.num /
 					      (float)pFormatCtx->streams[0]->r_frame_rate.den);
