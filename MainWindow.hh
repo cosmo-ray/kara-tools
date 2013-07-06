@@ -70,6 +70,7 @@ private:
   QAction     *_beginEyecatch;
   QAction     *_endEyecatch;
   QAction     *_noDouble;
+  QAction     *_noFullScreen;
   DecoderThread     _decoderThread;
 
   enum Conf

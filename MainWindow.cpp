@@ -41,7 +41,6 @@ MainWindow::MainWindow() : _vbox(this),
 {
   QDesktopWidget *desktop = QApplication::desktop();
 
-  changePlayer(MPLAYER);
   initRand();
   resize(desktop->width(), desktop->height());
   setWindowTitle("Asamiya Saki will rape all your familly");
@@ -81,12 +80,6 @@ MainWindow::MainWindow() : _vbox(this),
   _savePlaylistButton.setText("Save");
   _loadPlaylistButton.setText("Load");
  
-  _changePlayerLocation = _PlayerMenu.addAction("select player location");
-  _selectMplayer = _PlayerMenu.addAction("select Mplayer as Player");
-  _selectVLC = _PlayerMenu.addAction("select VLC as Player");
-  _selectMplayer->setCheckable(true);
-  _selectMplayer->setChecked(true);
-  _selectVLC->setCheckable(true);
 
   _beginEyecatch = _eyecatchMenu.addAction("begin eyecatch");
   _beginEyecatch->setCheckable(true);
@@ -94,8 +87,19 @@ MainWindow::MainWindow() : _vbox(this),
   _endEyecatch->setCheckable(true);
 
   _noDouble = _playMenu.addAction("no double ?");
+  _noFullScreen = _playMenu.addAction("no Full Screen ?");
   _noDouble->setCheckable(true);
-    
+  _noFullScreen->setChecked(false);
+  _noFullScreen->setCheckable(true);
+  _noFullScreen->setChecked(false);
+
+  _changePlayerLocation = _PlayerMenu.addAction("select player location");
+  _selectMplayer = _PlayerMenu.addAction("select Mplayer as Player");
+  _selectVLC = _PlayerMenu.addAction("select VLC as Player");
+  _selectMplayer->setCheckable(true);
+  _selectMplayer->setChecked(true);
+  _selectVLC->setCheckable(true);
+
   _vbox.addLayout(&_hboxOptions);
   _vbox.addLayout(&_hbox2ndOptions);
   _vbox.addWidget(&_splitter);
@@ -135,6 +139,8 @@ void	MainWindow::connector(void)
   connect(_beginEyecatch, SIGNAL(triggered()), this, SLOT(beginEyecatch(void)));
   connect(_endEyecatch, SIGNAL(triggered()), this, SLOT(endEyecatch(void)));
   connect(_noDouble, SIGNAL(triggered()), this, SLOT(noDouble(void)));
+  connect(_noFullScreen, SIGNAL(triggered()), this, SLOT(noDouble(void)));
+
 
   /*button*/
   connect(&_start, SIGNAL(clicked(bool)), this, SLOT(start(void)));
@@ -466,14 +472,20 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 
 void  MainWindow::changePlayer(int i)
 {
+  _playerOpt = "";
   if (i == MPLAYER)
     {
-      _playerOpt = " -fs -ass -framedrop -autosync 30 -mc 2.0 ";
+      if (_noFullScreen->isChecked() == false)
+      	{
+      	  _playerOpt = " -fs";
+      	}
+      _playerOpt += " -ass -framedrop -autosync 30 -mc 2.0 ";
       _player = getPlayerCmd();
     }
   else
     {
-      _playerOpt = " -f";
+      if (_noFullScreen->isChecked() == false)
+      	_playerOpt = " -f ";
       _player = getPlayerCmd<VLC>();      
     }
 }
