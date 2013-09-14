@@ -46,6 +46,17 @@ main = do
                       hClose outh2
              _ -> putStrLn "Please specify an input file name and a fps"
 
+main2 :: System.IO.FilePath -> Float -> IO ()
+main2  x y  =
+    do 
+      inh <- openFile x ReadMode
+      outh <- openFile (modifext x "frm") WriteMode
+      outh2 <- openFile (modifext x "lyr") WriteMode
+      mainloop inh outh outh2 y
+      hClose inh
+      hClose outh
+      hClose outh2
+
 mainloop ::  Handle -> Handle -> Handle -> Float -> IO ()
 mainloop inh outh outh2 fps = 
     do ineof <- hIsEOF inh
