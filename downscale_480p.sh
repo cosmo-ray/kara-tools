@@ -1,7 +1,5 @@
 #!/bin/sh
 
-#mkdir 
-
 OLD_DIR_NAME=`date | tr ' :' '_'`_old
 
 GET_HEIGHT="ffprobe -v 0 -show_streams \"\$i\" | grep height | awk -F'=' '{ print \$2 }'"

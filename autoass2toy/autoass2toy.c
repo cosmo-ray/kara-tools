@@ -9,18 +9,20 @@
 #define AS1STR "ass2toy.exe "
 #define AS2LENGTH 14
 #define AS2STR "generatoy.exe "
+#define PAUSE "pause"
 #else
 #define AS1LENGTH 10
 #define AS1STR "./ass2toy "
 #define AS2LENGTH 12
 #define AS2STR "./generatoy "
+#define PAUSE "read"
 #endif
 
 int main(int argc, char **argv) {
   if (argc <= 1)
   {
       printf("not enouth argument\n");
-      system("pause");
+      system(PAUSE);
       return (-1);
   }
   double fps = 0;
@@ -63,7 +65,7 @@ int main(int argc, char **argv) {
       system(as1);
       for(i=0;ass[i]!='\0';++i)
         as2[i+AS2LENGTH]=ass[i];
-      printf("%s\n", as2);
+      //printf("%s\n", as2);
       system(as2);
     }
     avformat_free_context(pFormatCtx);
