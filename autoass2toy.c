@@ -1,5 +1,4 @@
-#include "libavcodec/avcodec.h"
-#include "libavformat/avformat.h"
+#include <libavformat/avformat.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
@@ -26,6 +25,7 @@ void main(int argc, char **argv) {
     {
       avformat_find_stream_info(pFormatCtx, NULL);
       fps = (float)pFormatCtx->streams[0]->r_frame_rate.num / (float)pFormatCtx->streams[0]->r_frame_rate.den;
+      avformat_close_input (&pFormatCtx);
       sprintf(fpsstring,"%f",fps);
       for(i=0;ass[i]!='\0';++i)
 	as1[i+10]=ass[i];

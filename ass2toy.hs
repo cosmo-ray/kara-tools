@@ -56,7 +56,7 @@ main2  x y  =
       hClose inh
       hClose outh
       hClose outh2
-
+			 
 mainloop ::  Handle -> Handle -> Handle -> Float -> IO ()
 mainloop inh outh outh2 fps = 
     do ineof <- hIsEOF inh
