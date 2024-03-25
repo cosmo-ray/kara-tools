@@ -14,19 +14,19 @@ void auto_str(char **s) {
 	free(*s);
    }
 
-struct frms {
+struct lyrs {
 	int frm_in, frm_out;
-	LIST_ENTRY(frms) entries;
+	int len;
+	char buf[1024];
+	LIST_ENTRY(lyrs) entries;
 };
 
-LIST_HEAD(frm_head, frms);
+LIST_HEAD(frm_head, lyrs);
 
 int main(int ac, char **av)
 {
-	RET_ON(ac < 3, "%s usage: file.ass, frm per ms (so an int)\n", av[0]);
+	RET_ON(ac < 2, "%s usage: file.ass\n", av[0]);
 	int fd_in = open(av[1], 0, O_RDONLY);
-	/* so i can use 2398 instead of 23.98 and not dealing with float */
-	int frm_per_cs = atoi(av[2]);
 	/* let's use VLA */
 	int in_len = strlen(av[1]);
 	if (in_len < 5)
@@ -37,8 +37,8 @@ int main(int ac, char **av)
 	assert(in);
 	int ret;
 	struct frm_head frm_head;
-	struct frms *frm = NULL;
-	struct frms *new;
+	struct lyrs *frm = NULL;
+	struct lyrs *new;
 
 	while (ret = read(fd_in, in + tot_write, 1024)) {
 		RET_ON(ret < 0, "error reading %s\n", av[1]);
@@ -70,12 +70,11 @@ new_line:
 	events += sizeof "Dialogue:";
 	/* time format: 0,0:00:11.29 */
 	events = strchr(events, ':') + 1;
-	line_fmr = 60 * atoi(events) * frm_per_cs;
+	line_fmr = 60 * atoi(events) * 100;
 	events = strchr(events, ':') + 1;
-	line_fmr += atoi(events) * frm_per_cs;
+	line_fmr += atoi(events) * 100;
 	events = strchr(events, '.') + 1;
-	line_fmr = line_fmr / 100;
-	line_fmr += atoi(events) * frm_per_cs / 10000;
+	line_fmr += atoi(events);
 	next_events = strstr(events, "Dialogue:");
 
 	putchar(';');
@@ -88,7 +87,7 @@ new_line:
 		for (; !(*syl > '0' && *syl < '9'); ++syl);
 		new = malloc(sizeof *frm);
 		new->frm_in = line_fmr + 1;
-		line_fmr += (atoi(syl) * frm_per_cs / 10000 );
+		line_fmr += atoi(syl);
 		new->frm_out = line_fmr;
 
 		syl = strchr(syl, '}');
