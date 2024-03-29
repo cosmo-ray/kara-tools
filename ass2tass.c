@@ -139,19 +139,22 @@ new_line:
 	struct lyrs *back = LIST_FIRST(&frm_head);
 	LIST_FOREACH(frm, &frm_head, entries) {
 		if (frm->dialogue) {
+			if (back != frm)
+				printf("\\N");
 			while(back != frm) {
 				printf("{\\pc(%d,%d)}%s", back->frm_in - back->dial_start,
-				       back->frm_out - back->dial_start, back->buf);
+				       back->len, back->buf);
 				back = LIST_NEXT(back, entries);
 			}
 			printf("\n%s{\\fade(750, 500)}", frm->dialogue);
 		}
 		printf("{\\kt(%d,%d)}%s", frm->frm_in - frm->dial_start,
-		       frm->frm_out - frm->dial_start, frm->buf);
+		       frm->len, frm->buf);
 	}
+	printf("\\N");
 	while(back != NULL) {
 		printf("{\\pc(%d,%d)}%s", back->frm_in - back->dial_start,
-		       back->frm_out - back->dial_start, back->buf);
+		       back->len, back->buf);
 		back = LIST_NEXT(back, entries);
 	}
 
