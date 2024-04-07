@@ -61,9 +61,20 @@ int main(int ac, char **av)
 	RET_ON(!events, "Events not found");
 
 	/* print headers */
-	*events = 0;
-	printf("%s\n", in);
-	events += sizeof("[Events"); /* ']' imgmore on purpose, as sizeof contain the \0 */
+	printf("[Script Info]\n"
+	       "ScriptType: v4.00+\n"
+	       "WrapStyle: 5\n"
+	       "ScaledBorderAndShadow: yes\n"
+	       "YCbCrMatrix: TV.601\n"
+	       "PlayResX: 1280\n"
+	       "PlayResY: 720\n"
+	       "TimingVersion: 4\n\n");
+
+	printf("[V4+ Styles]\n"
+	       "Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, KaraokeColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\n"
+	       "Style: Default, DejaVu Sans, 25, &H00FFAA55, &H0000FFFF, &H000000FF, &H00000000, &H00000000, 0, 0, 0, 0, 200, 200, 0, 0, 1, 5, 2, 8, 10, 10, 10, 1\n\n");
+
+	events += sizeof("[Events"); /* ']' ignore on purpose, as sizeof contain the \0 */
 
 	/* for now the style is fix */
 	events = strstr(events, "Dialogue:");
